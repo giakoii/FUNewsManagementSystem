@@ -1,0 +1,380 @@
+# Ignore .NET build results
+bin/
+obj/
+
+# Rider project files
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider settings
+.idea/
+
+# Rider plugin
+.idea_modules/
+
+# Rider workspace
+.idea/workspace.xml
+
+# Rider tasks
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/encodings.xml
+
+# Rider vcs.xml
+.idea/vcs.xml
+
+# Rider workspace.xml
+.idea/workspace.xml
+
+# Rider tasks.xml
+.idea/tasks.xml
+
+# Rider dictionaries
+.idea/dictionaries
+
+# Rider run configurations
+.idea/runConfigurations
+
+# Rider code style
+.idea/codeStyles
+
+# Rider project view
+.idea/projectView.xml
+
+# Rider modules.xml
+.idea/modules.xml
+
+# Rider misc.xml
+.idea/misc.xml
+
+# Rider encodings.xml
+.idea/enco
