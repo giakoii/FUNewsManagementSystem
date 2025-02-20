@@ -5,33 +5,31 @@ namespace DataAccessObject.Models;
 
 public partial class NewsArticle
 {
-    public int NewsArticleId { get; set; }
+    public string NewsArticleId { get; set; } = null!;
 
-    public string NewsTitle { get; set; } = null!;
+    public string? NewsTitle { get; set; }
 
-    public string? Headline { get; set; }
+    public string Headline { get; set; } = null!;
 
     public DateTime? CreatedDate { get; set; }
 
-    public string NewsContent { get; set; } = null!;
+    public string? NewsContent { get; set; }
 
     public string? NewsSource { get; set; }
 
-    public int CategoryId { get; set; }
+    public short? CategoryId { get; set; }
 
-    public string NewsStatus { get; set; } = null!;
+    public bool? NewsStatus { get; set; }
 
-    public int CreatedById { get; set; }
+    public short? CreatedById { get; set; }
 
-    public int? UpdatedById { get; set; }
+    public short? UpdatedById { get; set; }
 
     public DateTime? ModifiedDate { get; set; }
 
-    public virtual Category Category { get; set; } = null!;
+    public virtual Category? Category { get; set; }
 
-    public virtual SystemAccount CreatedBy { get; set; } = null!;
-
-    public virtual SystemAccount? UpdatedBy { get; set; }
+    public virtual SystemAccount? CreatedBy { get; set; }
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }

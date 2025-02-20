@@ -5,13 +5,13 @@ namespace DataAccessObject.Models;
 
 public partial class Category
 {
-    public int CategoryId { get; set; }
+    public short CategoryId { get; set; }
 
     public string CategoryName { get; set; } = null!;
 
-    public string? CategoryDescription { get; set; }
+    public string CategoryDesciption { get; set; } = null!;
 
-    public int? ParentCategoryId { get; set; }
+    public short? ParentCategoryId { get; set; }
 
     public bool? IsActive { get; set; }
 
