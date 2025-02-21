@@ -72,6 +72,7 @@ public class HomeController : Controller
         {
             new Claim(ClaimTypes.Name, user.AccountName),
             new Claim(ClaimTypes.Email, user.AccountEmail),
+            new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
             new Claim(ClaimTypes.Role, role)
         };
 

@@ -19,7 +19,7 @@ namespace BusinessObject.Service
 
         public bool AddNewsArticle(NewsArticle newsArticle)
         {
-            throw new NotImplementedException();
+            return _newArticleRepository.Add(newsArticle);
         }
 
         public bool DeleteNewsArticle(int id)
@@ -39,7 +39,7 @@ namespace BusinessObject.Service
 
         public NewsArticle GetNewsArticleById(int id)
         {
-            throw new NotImplementedException();
+            return _newArticleRepository.GetById(id);
         }
 
         public void UpdateNewsArticle(NewsArticle newsArticle)

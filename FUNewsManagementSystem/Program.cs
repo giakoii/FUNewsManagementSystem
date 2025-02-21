@@ -11,6 +11,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<NewArticleRepository>();
 builder.Services.AddScoped<INewArticleService, NewArticleService>();
+builder.Services.AddScoped<TagsRepository>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<SystemAccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<FUNewsManagementSystemContext>();

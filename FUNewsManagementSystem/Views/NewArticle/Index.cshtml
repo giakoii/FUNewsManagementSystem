@@ -1,8 +1,10 @@
 ﻿@model IEnumerable<DataAccessObject.Models.NewsArticle>
 @{
-	ViewData["Title"] = "Danh sách Bài Viết (Domain Model)";
+    ViewData["Title"] = "Danh sách Bài Viết (Domain Model)";
 }
 <h1>@ViewData["Title"]</h1>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">Add New Article</button>
 
 <table class="table table-bordered">
     <thead>
@@ -13,6 +15,7 @@
             <th>Category Name</th>
             <th>Tag Name</th>
             <th>Ngày đăng</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -29,9 +32,175 @@
                         article.CreatedDate.HasValue
                         ? article.CreatedDate.Value.ToString("dd/MM/yyyy")
                         : ""
-                     )
+                    )
+                </td>
+                <td>
+                    <button class="btn btn-warning btn-sm edit-article-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#updateArticleModal"
+                            data-id="@article.NewsArticleId"
+                            data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
+                            data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))"
+                            data-category="@article.Category.CategoryId"
+                            data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))">
+                        Edit
+                    </button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Modal Add Article -->
+<div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addArticleForm" method="post" asp-action="AddArticle">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addArticleModalLabel">Add New Article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newsTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="newsTitle" name="NewsTitle" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="headLine" class="form-label">Headline</label>
+                        <input type="text" class="form-control" id="headLine" name="HeadLine" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newSource" class="form-label">News Source</label>
+                        <input type="text" class="form-control" id="newSource" name="NewSource" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newsContent" class="form-label">Content</label>
+                        <textarea class="form-control" id="newsContent" name="NewsContent" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="SelectedCategory" required>
+                            <option value="">-- Select Category --</option>
+                            @foreach (var category in (IEnumerable<DataAccessObject.Models.Category>)ViewBag.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tags</label>
+                        <select multiple class="form-control" id="tags" name="SelectedTags">
+                            @foreach (var tag in (IEnumerable<DataAccessObject.Models.Tag>)ViewBag.Tags)
+                            {
+                                <option value="@tag.TagId">@tag.TagName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update Article -->
+<div class="modal fade" id="updateArticleModal" tabindex="-1" aria-labelledby="updateArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="updateArticleForm" method="post" asp-action="UpdateArticle">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateArticleModalLabel">Update Article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="updateArticleId" name="NewsArticleId" />
+
+                    <div class="mb-3">
+                        <label for="updateNewsTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="updateNewsTitle" name="NewsTitle" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="updateNewsContent" class="form-label">Content</label>
+                        <textarea class="form-control" id="updateNewsContent" name="NewsContent" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="updateCategory" class="form-label">Category</label>
+                        <select class="form-control" id="updateCategory" name="SelectedCategory" required>
+                            <option value="">-- Select Category --</option>
+                            @foreach (var category in (IEnumerable<DataAccessObject.Models.Category>)ViewBag.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="updateTags" class="form-label">Tags</label>
+                        <select multiple class="form-control" id="updateTags" name="SelectedTags">
+                            @foreach (var tag in (IEnumerable<DataAccessObject.Models.Tag>)ViewBag.Tags)
+                            {
+                                <option value="@tag.TagId">@tag.TagName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<!-- Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- JavaScript -->
+<script>
+    $(document).ready(function () {
+        // Initialize Select2 for tags
+        $('#tags, #updateTags').select2({
+            placeholder: "Select tags",
+            allowClear: true
+        });
+
+        // Handle showing data in Update Modal
+        $('#updateArticleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+
+            // Get data attributes from the button
+            var articleId = button.data('id');
+            var articleTitle = button.data('title');
+            var articleContent = button.data('content');
+            var categoryId = button.data('category');
+            var tagIds = button.data('tags') ? button.data('tags').toString().split(',') : [];
+
+            // Debugging log
+            console.log("Editing Article:", articleId, articleTitle, articleContent, categoryId, tagIds);
+
+            // Set data into the form fields
+            $('#updateArticleId').val(articleId);
+            $('#updateNewsTitle').val(articleTitle);
+            $('#updateNewsContent').val(articleContent);
+            $('#updateCategory').val(categoryId);
+            $('#updateTags').val(tagIds).trigger('change');
+        });
+    });
+</script>
