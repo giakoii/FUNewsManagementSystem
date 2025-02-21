@@ -12,31 +12,27 @@
 
 <div class="container-fluid vh-100">
     <div class="row h-100">
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 bg-dark text-white d-flex flex-column position-fixed top-0 start-0 vh-100 p-4 shadow">
+        <nav class="col-md-3 col-lg-2 bg-dark text-white d-flex flex-column p-4 shadow position-fixed top-0 start-0 vh-100">
             <h2 class="text-center border-bottom pb-3">Admin Menu</h2>
-            <ul class="nav flex-column mt-3 text-center">
+            <ul class="nav flex-column mt-3">
                 <li class="nav-item mb-3">
-                    <a href="#" class="nav-link text-white fw-bold py-3 rounded shadow-sm hover-effect" data-url="@Url.Action("ManageUsers", "Admin")">
+                    <a href="/Admin/ManageUsers" class="nav-link text-white fw-bold py-3 rounded shadow-sm hover-effect">
                         <i class="bi bi-people"></i> Manage Users
                     </a>
                 </li>
                 <li class="nav-item mb-3">
-                    <a href="#" class="nav-link text-white fw-bold py-3 rounded shadow-sm hover-effect" data-url="@Url.Action("ManageArticles", "Admin")">
+                    <a href="#" class="nav-link text-white fw-bold py-3 rounded shadow-sm hover-effect">
                         <i class="bi bi-file-text"></i> Manage Articles
                     </a>
                 </li>
-                <li class="nav-item mt-auto">
-                    <form asp-action="Logout" asp-controller="Home" method="get">
-                        <button type="submit" class="btn btn-danger fw-bold py-3 w-100 shadow-lg text-white">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </button>
-                    </form>
-                </li>
             </ul>
-        </nav>
 
-        <!-- Content Area -->
+            <div class="mt-auto">
+                <button type="button" id="logoutBtn" class="btn btn-danger fw-bold w-100 py-3 shadow-lg text-white">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </nav>
         <main class="col-md-8 col-lg-10 ms-auto p-5 bg-light">
             <h1 class="text-center text-dark">Welcome to Admin Dashboard</h1>
             <p class="text-center text-secondary">Select a menu option to load content here.</p>
@@ -45,17 +41,42 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $(".menu-item").click(function (e) {
+            $(".nav-link[data-url]").click(function (e) {
                 e.preventDefault();
                 var url = $(this).data("url");
 
                 if (url) {
                     $("#content-area").html('<h2 class="text-center text-primary">Loading...</h2>');
-                    $("#content-area").load(url);
+
+                    $("#content-area").load(url, function (response, status, xhr) {
+                        if (status == "error") {
+                            $("#content-area").html('<h2 class="text-center text-danger">Error loading content.</h2>');
+                            console.error("Error loading content:", xhr.status, xhr.statusText);
+                        }
+                    });
                 }
+            });
+
+            $("#logoutBtn").click(function () {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You will be logged out of the system.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, Logout",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "@Url.Action("Logout", "Home")";
+                    }
+                });
             });
         });
     </script>

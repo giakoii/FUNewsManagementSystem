@@ -1,0 +1,238 @@
+﻿@model List<DataAccessObject.Models.SystemAccount>
+  <!-- Bootstrap CSS & Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .modal-backdrop {
+      backdrop-filter: blur(8px);
+    }
+  </style>
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">
+      <i class="bi bi-people"></i> Manage Users
+    </h2>
+    <!-- Add User Button -->
+    <div class="mb-3 text-end">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+        <i class="bi bi-person-plus"></i> Add User </button>
+    </div>
+    <!-- Search Box -->
+    <div class="row mb-3">
+      <div class="col-md-6 offset-md-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search users by name or email...">
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"> @if (Model != null && Model.Any()) { @foreach (var user in Model) { <tr data-id="@user.AccountId">
+            <td>@user.AccountId</td>
+            <td>@user.AccountName</td>
+            <td>@user.AccountEmail</td>
+            <td>@user.AccountPassword</td>
+            <td>@(user.AccountRole == 1 ? "Staff" : "Lecturer")</td>
+            <td>
+              <button class="btn btn-sm btn-primary editUserBtn" data-id="@user.AccountId" data-name="@user.AccountName" data-email="@user.AccountEmail" data-password="@user.AccountPassword" data-role="@user.AccountRole">
+                <i class="bi bi-pencil-square"></i> Edit </button>
+              <button class="btn btn-sm btn-danger deleteUserBtn" data-id="@user.AccountId">
+                <i class="bi bi-trash"></i> Delete </button>
+            </td>
+          </tr> } } else { <tr>
+            <td colspan="4" class="text-center text-muted py-3">
+              <i class="bi bi-exclamation-triangle-fill text-danger"></i> No users found.
+            </td>
+          </tr> } </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Add User Modal -->
+  <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addUserForm">
+            <div class="mb-3">
+              <label for="addUserName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="addUserName" required>
+            </div>
+            <div class="mb-3">
+              <label for="addUserEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="addUserEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="addUserPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="addUserPassword" required>
+            </div>
+            <div class="mb-3">
+              <label for="addUserRole" class="form-label">Role</label>
+              <select class="form-select" id="addUserRole" required>
+                <option value="1">Staff</option>
+                <option value="2">Lecturer</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Add User</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Edit User Modal -->
+  <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editUserForm">
+            <input type="hidden" id="editUserId">
+            <div class="mb-3">
+              <label for="editUserName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="editUserName" required>
+            </div>
+            <div class="mb-3">
+              <label for="editUserEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="editUserEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="editUserPassword" class="form-label">New Password (Leave blank if unchanged)</label>
+              <input type="password" class="form-control" id="editUserPassword">
+            </div>
+            <div class="mb-3">
+              <label for="editUserRole" class="form-label">Role</label>
+              <select class="form-select" id="editUserRole" required>
+                <option value="1">Staff</option>
+                <option value="2">Lecturer</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      $("#searchInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#userTableBody tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+      });
+      $(document).on("click", ".editUserBtn", function() {
+        var userId = $(this).data("id");
+        var userName = $(this).data("name");
+        var userEmail = $(this).data("email");
+        var userPassword = $(this).data("password");
+        var userRole = $(this).data("role");
+        if (!userId) {
+          alert("Error: User ID is missing!");
+          return;
+        }
+        $("#editUserId").val(userId);
+        $("#editUserName").val(userName);
+        $("#editUserEmail").val(userEmail);
+        $("#editUserPassword").val(userPassword);
+        $("#editUserRole").val(userRole);
+        $("#editUserModal").modal("show");
+      });
+      $("#editUserForm").submit(function(e) {
+        e.preventDefault();
+        var id = $("#editUserId").val();
+        var name = $("#editUserName").val();
+        var email = $("#editUserEmail").val();
+        var password = $("#editUserPassword").val();
+        var role = $("#editUserRole").val();
+        $.ajax({
+          url: "/Admin/UpdateUser",
+          type: "PUT",
+          contentType: "application/json",
+          data: JSON.stringify({
+            AccountId: id,
+            AccountName: name,
+            AccountEmail: email,
+            AccountPassword: password,
+            AccountRole: parseInt(role)
+          }),
+          success: function() {
+            alert("User updated successfully!");
+            $("#editUserForm").modal("hide");
+            location.reload();
+          },
+          error: function() {
+            alert("Failed to update user.");
+          }
+        });
+      });
+    });
+    $("#addUserForm").submit(function(e) {
+      e.preventDefault();
+      var name = $("#addUserName").val();
+      var email = $("#addUserEmail").val();
+      var password = $("#addUserPassword").val();
+      var role = $("#addUserRole").val();
+      $.ajax({
+        url: "/Admin/CreateUser",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          AccountName: name,
+          AccountEmail: email,
+          Password: password,
+          RoleId: parseInt(role)
+        }),
+        success: function() {
+          alert("User added successfully!");
+          $("#addUserModal").modal("hide");
+          $("#addUserForm")[0].reset();
+          location.reload();
+        },
+        error: function() {
+          alert("Failed to add user.");
+        }
+      });
+    });
+    $(document).ready(function() {
+      $(document).on("click", ".deleteUserBtn", function() {
+        var userId = $(this).data("id");
+        if (!userId) {
+          alert("Error: User ID is missing!");
+          return;
+        }
+        if (!confirm("Are you sure you want to delete this user?")) {
+          return;
+        }
+        $.ajax({
+          url: "/Admin/DeleteUser?id=" + userId,
+          type: "DELETE",
+          contentType: "application/json",
+          data: JSON.stringify({
+            AccountId: userId
+          }),
+          success: function(response) {
+            alert("User deleted successfully!");
+            location.reload();
+          },
+          error: function(xhr) {
+            alert("Failed to delete user. Error: " + xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
