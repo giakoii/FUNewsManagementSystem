@@ -1,0 +1,37 @@
+﻿@model IEnumerable<DataAccessObject.Models.NewsArticle>
+@{
+	ViewData["Title"] = "Danh sách Bài Viết (Domain Model)";
+}
+<h1>@ViewData["Title"]</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Tiêu đề</th>
+            <th>Nội dung</th>
+            <th>Category Name</th>
+            <th>Tag Name</th>
+            <th>Ngày đăng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var article in Model)
+        {
+            <tr>
+                <td>@article.NewsArticleId</td>
+                <td>@article.NewsTitle</td>
+                <td>@article.NewsContent</td>
+                <td>@article.Category.CategoryName</td>
+                <td>@string.Join(", ", article.Tags.Select(tag => tag.TagName))</td>
+                <td>
+                    @(
+                        article.CreatedDate.HasValue
+                        ? article.CreatedDate.Value.ToString("dd/MM/yyyy")
+                        : ""
+                     )
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
