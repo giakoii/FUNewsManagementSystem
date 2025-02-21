@@ -49,5 +49,17 @@ namespace BusinessObject.Service
 
             return null;
         }
+        public SystemAccount GetUserById(short id)
+        {
+            return _systemAccountRepository.GetAll(
+                x => x.AccountId == id,
+                includes: x => x.NewsArticles
+            ).FirstOrDefault();
+        }
+
+        public void UpdateUser(SystemAccount user)
+        {
+            _systemAccountRepository.Update(user);
+        }
     }
 }

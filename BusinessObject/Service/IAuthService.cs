@@ -11,5 +11,7 @@ namespace BusinessObject.Service
     {
         Task<SystemAccount> LoginAsync(string username, string password);
         Task<SystemAccount> LoginAdmin(string username, string password);
+        SystemAccount GetUserById(short id);
+        void UpdateUser(SystemAccount user);
     }
 }

@@ -9,10 +9,11 @@ namespace BusinessObject.Service
 {
     public interface ITagService
     {
-        IEnumerable<NewsArticle> GetAllNewsArticles();
-        NewsArticle GetNewsArticleById(int id);
-        bool AddNewsArticle(NewsArticle newsArticle);
-        void UpdateNewsArticle(NewsArticle newsArticle);
-        bool DeleteNewsArticle(int id);
+        IEnumerable<Tag> GetAllTags();
+        Tag GetTagById(int id);
+        bool AddTag(Tag tag);
+        void UpdateTag(Tag tag);
+        bool DeleteTag(int id);
+        IEnumerable<Tag> GetTagsByIds(List<int> ids);
     }
 }

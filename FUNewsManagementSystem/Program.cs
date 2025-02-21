@@ -13,7 +13,11 @@ builder.Services.AddScoped<NewArticleRepository>();
 builder.Services.AddScoped<INewArticleService, NewArticleService>();
 builder.Services.AddScoped<SystemAccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<FUNewsManagementSystemContext>();
+builder.Services.AddScoped<IRepository<Category>, BaseRepository<Category>>();
+builder.Services.AddScoped<IRepository<Tag>, BaseRepository<Tag>>();
 builder.Services.Configure<AdminAccount>(builder.Configuration.GetSection("AdminAccount"));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

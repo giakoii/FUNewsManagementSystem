@@ -13,5 +13,7 @@ public interface IRepository<T> where T : class
     void Update(T entity);
 
     bool Delete(int id);
-    
+    bool Deletee(T entity);
+
+
 }
