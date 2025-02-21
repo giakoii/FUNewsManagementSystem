@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+<style>
+    .hover-effect:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important;
+        transform: scale(1.05);
+        transition: all 0.3s ease-in-out;
+    }
+</style>
+
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 bg-dark text-white d-flex flex-column position-fixed top-0 start-0 vh-100 p-4 shadow">
+            <h2 class="text-center border-bottom pb-3">Admin Menu</h2>
+            <ul class="nav flex-column mt-3 text-center">
+                <li class="nav-item mb-3">
+                    <a href="#" class="nav-link text-white fw-bold py-3 rounded shadow-sm hover-effect" data-url="@Url.Action("ManageUsers", "Admin")">
+                        <i class="bi bi-people"></i> Manage Users
+                    </a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a href="#" class="nav-link text-white fw-bold py-3 rounded shadow-sm hover-effect" data-url="@Url.Action("ManageArticles", "Admin")">
+                        <i class="bi bi-file-text"></i> Manage Articles
+                    </a>
+                </li>
+                <li class="nav-item mt-auto">
+                    <form asp-action="Logout" asp-controller="Home" method="get">
+                        <button type="submit" class="btn btn-danger fw-bold py-3 w-100 shadow-lg text-white">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Content Area -->
+        <main class="col-md-8 col-lg-10 ms-auto p-5 bg-light">
+            <h1 class="text-center text-dark">Welcome to Admin Dashboard</h1>
+            <p class="text-center text-secondary">Select a menu option to load content here.</p>
+            <div id="content-area" class="mt-4"></div>
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".menu-item").click(function (e) {
+                e.preventDefault();
+                var url = $(this).data("url");
+
+                if (url) {
+                    $("#content-area").html('<h2 class="text-center text-primary">Loading...</h2>');
+                    $("#content-area").load(url);
+                }
+            });
+        });
+    </script>
+}
