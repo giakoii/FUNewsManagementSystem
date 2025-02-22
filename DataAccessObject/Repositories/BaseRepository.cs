@@ -6,7 +6,7 @@ namespace DataAccessObject.Repositories;
 
 public class BaseRepository<T> : IRepository<T> where T : class
 {
-    private readonly FUNewsManagementSystemContext _context;
+    protected readonly FUNewsManagementSystemContext _context;
     
     public BaseRepository(FUNewsManagementSystemContext context)
     {

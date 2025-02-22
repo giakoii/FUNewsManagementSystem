@@ -72,6 +72,7 @@ public class HomeController : Controller
         {    new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
             new Claim(ClaimTypes.Name, user.AccountName),
             new Claim(ClaimTypes.Email, user.AccountEmail),
+            new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
             new Claim(ClaimTypes.Role, role)
         };
 
@@ -85,9 +86,14 @@ public class HomeController : Controller
            ExpiresUtc = DateTime.UtcNow.AddDays(7)
         });
 
-        return RedirectToAction("", "NewArticle");
+        return (role == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("", "NewArticle");
     }
-
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Index", "Home");
+    }
     public IActionResult Privacy()
     {
         return View();

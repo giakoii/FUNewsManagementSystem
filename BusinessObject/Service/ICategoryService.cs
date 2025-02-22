@@ -9,11 +9,16 @@ namespace BusinessObject.Service
 {
     public interface ICategoryService
     {
+
         IEnumerable<Category> GetAllCategories();
         Category GetCategoryById(short id);
         bool AddCategory(Category category);
         void UpdateCategory(Category category);
         bool DeleteCategory(short id);
         bool IsCategoryInUse(short categoryId);
+
+        IEnumerable<Category> GetAllCategory();
+        IEnumerable<Category> GetAllSubCategory(int categoryId);
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using DataAccessObject.Models;
+using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,6 +11,7 @@ namespace BusinessObject.Service
 {
     public class CategoryService : ICategoryService
     {
+
         private readonly IRepository<Category> _categoryRepository;
         private readonly FUNewsManagementSystemContext _context;
         public CategoryService(IRepository<Category> categoryRepository, FUNewsManagementSystemContext context)
@@ -45,5 +46,22 @@ namespace BusinessObject.Service
 
         public bool IsCategoryInUse(short categoryId) =>
             _categoryRepository.GetAll(x => x.CategoryId == categoryId && x.NewsArticles.Any()).Any();
+
+        private readonly CategoryRepository _categoryRepository;
+
+        public CategoryService(CategoryRepository categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+        }
+
+        public IEnumerable<Category> GetAllCategory()
+        {
+            return _categoryRepository.GetAll();
+        }
+
+        public IEnumerable<Category> GetAllSubCategory(int categoryID)
+        {
+            return _categoryRepository.GetAll(x => x.ParentCategoryId == categoryID, true, null);
+        }
     }
 }

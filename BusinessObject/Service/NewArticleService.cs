@@ -21,6 +21,7 @@ namespace BusinessObject.Service
 
         public bool AddNewsArticle(NewsArticle newsArticle)
         {
+
             try
             {
                 // Generate unique ID
@@ -51,6 +52,9 @@ namespace BusinessObject.Service
             {
                 return false;
             }
+
+            return _newArticleRepository.Add(newsArticle);
+
         }
 
         private string GenerateArticleId()
@@ -92,12 +96,15 @@ namespace BusinessObject.Service
 
         public NewsArticle GetNewsArticleById(string id)
         {
+
             return _newArticleRepository.GetAll(
                 x => x.NewsArticleId == id,
                 true, // isTracking
                 x => x.Category,
                 x => x.Tags
             ).FirstOrDefault();
+
+            return _newArticleRepository.GetById(id);
         }
 
         public void UpdateNewsArticle(NewsArticle newsArticle)
