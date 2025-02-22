@@ -10,9 +10,9 @@ namespace BusinessObject.Service
     public interface INewArticleService
     {
         IEnumerable<NewsArticle> GetAllNewsArticles();
-        NewsArticle GetNewsArticleById(int id);
+        NewsArticle GetNewsArticleById(string id); 
         bool AddNewsArticle(NewsArticle newsArticle);
         void UpdateNewsArticle(NewsArticle newsArticle);
-        bool DeleteNewsArticle(int id);
+        bool DeleteNewsArticle(string id); 
     }
 }
