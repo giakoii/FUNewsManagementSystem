@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-
+﻿using Microsoft.EntityFrameworkCore;
 namespace DataAccessObject.Models;
 
 public partial class FUNewsManagementSystemContext : DbContext
@@ -21,8 +18,12 @@ public partial class FUNewsManagementSystemContext : DbContext
 
     public virtual DbSet<SystemAccount> SystemAccounts { get; set; }
 
+    
     public virtual DbSet<Tag> Tags { get; set; }
-
+    
+    
+    public virtual DbSet<ViewUserNewsHistory> ViewUserNewsHistories { get; set; }
+    
     public virtual DbSet<VwAccountProfile> VwAccountProfiles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -120,6 +121,29 @@ public partial class FUNewsManagementSystemContext : DbContext
             entity.Property(e => e.Note).HasMaxLength(400);
             entity.Property(e => e.TagName).HasMaxLength(50);
         });
+        modelBuilder.Entity<VwAccountProfile>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VW_AccountProfile");
+
+            entity.Property(e => e.AccountEmail).HasMaxLength(70);
+            entity.Property(e => e.AccountName).HasMaxLength(100);
+        });
+        
+        modelBuilder.Entity<ViewUserNewsHistory>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("View_UserNewsHistory");
+
+            entity.Property(e => e.CreatedByName).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.NewsArticleId).HasMaxLength(20);
+            entity.Property(e => e.NewsContent).HasMaxLength(4000);
+            entity.Property(e => e.NewsSource).HasMaxLength(400);
+            entity.Property(e => e.NewsTitle).HasMaxLength(400);
+        });
 
         modelBuilder.Entity<VwAccountProfile>(entity =>
         {
@@ -130,7 +154,6 @@ public partial class FUNewsManagementSystemContext : DbContext
             entity.Property(e => e.AccountEmail).HasMaxLength(70);
             entity.Property(e => e.AccountName).HasMaxLength(100);
         });
-
         OnModelCreatingPartial(modelBuilder);
     }
 

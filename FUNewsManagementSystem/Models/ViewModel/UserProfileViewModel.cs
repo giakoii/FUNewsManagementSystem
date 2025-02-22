@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FUNewsManagementSystem.ViewModels;
+namespace FUNewsManagementSystem.Models.ViewModel;
 
 public class UserProfileViewModel
 {

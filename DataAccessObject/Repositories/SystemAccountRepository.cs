@@ -61,4 +61,9 @@ public class SystemAccountRepository : BaseRepository<SystemAccount>, ISystemAcc
         }
     }
 
+    public List<ViewUserNewsHistory> GetNewsHistory(string email)
+    {
+        var accountName = _context.SystemAccounts.AsNoTracking().FirstOrDefault(x => x.AccountEmail == email)?.AccountName;
+        return _context.ViewUserNewsHistories.AsNoTracking().Where(x => x.CreatedByName == accountName).ToList();
+    }
 }

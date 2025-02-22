@@ -1,4 +1,4 @@
-@model FUNewsManagementSystem.ViewModels.UserProfileViewModel
+@model FUNewsManagementSystem.Models.ViewModel.UserProfileWithNewsHistoryViewModel
 
 <!DOCTYPE html>
 <html>
@@ -31,7 +31,7 @@
                             <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
                                  class="rounded-circle" width="150">
                             <div class="mt-3">
-                                <h4 asp-controller="User" asp-action="Index">@Model.Name</h4>
+                                <h4 asp-controller="User" asp-action="Index">@Model.UserProfile.Name</h4>
                                 <p class="text-secondary mb-1">Full Stack Developer</p>
                                 <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
                                 <button class="btn btn-primary">Follow</button>
@@ -117,7 +117,7 @@
                                 <h6 class="mb-0">Full Name</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                @Model.Name
+                                @Model.UserProfile.Name
                             </div>
                         </div>
                         <hr>
@@ -126,7 +126,7 @@
                                 <h6 class="mb-0">Email</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                                @Model.Email
+                                @Model.UserProfile.Email
                             </div>
                         </div>
                         <hr>
@@ -183,7 +183,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <form method="post" action="/User/Delete">
-                                <input type="hidden" name="email" value="@Model.Email">
+                                <input type="hidden" name="email" value="@Model.UserProfile.Email">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>
@@ -201,11 +201,11 @@
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label class="form-label">Full Name</label>
-                                    <input type="text" name="Name" class="form-control" value="@Model.Name">
+                                    <input type="text" name="Name" class="form-control" value="@Model.UserProfile.Name">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" name="Email" class="form-control" value="@Model.Email" readonly>
+                                    <input type="email" name="Email" class="form-control" value="@Model.UserProfile.Email" readonly>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -285,6 +285,42 @@
                             </div>
                         </div>
                     </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">NewsArticleId</th>
+                            <th scope="col">NewsTitle</th>
+                            <th scope="col">CreatedDate</th>
+                            <th scope="col">NewsContent</th>
+                            <th scope="col">NewsSource</th>
+                            <th scope="col">CategoryId</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model != null && Model.NewsArticleHistory.Any())
+                        {
+                            @foreach (var news in Model.NewsArticleHistory)
+                            {
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>@news.NewsArticleId</td>
+                                    <td>@news.NewsTitle</td>
+                                    <td>@news.CreatedDate?.ToString("yyyy-MM-dd")</td> 
+                                    <td>@news.NewsContent</td>
+                                    <td>@news.NewsSource</td>
+                                    <td>@news.CategoryId</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="10" class="text-center">No news history found.</td>
+                            </tr>
+                        }
+                    </table>
                 </div>
             </div>
         </div>
