@@ -19,6 +19,8 @@ builder.Services.AddScoped<SystemAccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<FUNewsManagementSystemContext>();
 builder.Services.Configure<AdminAccount>(builder.Configuration.GetSection("AdminAccount"));
+builder.Services.AddScoped<AccountRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

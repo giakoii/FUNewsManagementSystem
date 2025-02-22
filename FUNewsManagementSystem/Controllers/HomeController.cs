@@ -86,9 +86,14 @@ public class HomeController : Controller
            ExpiresUtc = DateTime.UtcNow.AddDays(7)
         });
 
-        return RedirectToAction("", "NewArticle");
+        return (role == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("", "NewArticle");
     }
-
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Index", "Home");
+    }
     public IActionResult Privacy()
     {
         return View();
