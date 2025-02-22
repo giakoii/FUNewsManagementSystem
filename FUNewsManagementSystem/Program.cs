@@ -2,9 +2,14 @@ using BusinessObject.Service;
 using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using BusinessObject.SystemAccountService;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<FUNewsManagementSystemContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -23,14 +28,17 @@ builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Home/Index";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
-        options.SlidingExpiration = true;
-        options.Cookie.IsEssential = true;
-    });
+     .AddCookie(options =>
+     {
+         options.LoginPath = "/Home/Index";
+         options.ExpireTimeSpan = TimeSpan.FromDays(7);
+         options.SlidingExpiration = true;
+         options.Cookie.IsEssential = true;
+     });
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
+builder.Services.AddScoped<ISystemAccountService, SystemAccountServiceImp>();
 
 var app = builder.Build();
 
@@ -52,5 +60,4 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.Run();

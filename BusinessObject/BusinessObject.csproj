@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -23,6 +23,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DataAccessObject\DataAccessObject.csproj" />
+      <Folder Include="Categories\" />
+      <Folder Include="NewsAticles\" />
+      <Folder Include="Tags\" />
     </ItemGroup>
-
 </Project>
