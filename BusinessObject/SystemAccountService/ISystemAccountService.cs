@@ -12,4 +12,6 @@ public interface ISystemAccountService
     
     void UpdateAccount(SystemAccount account);
     bool DeleteAccount(short id);
+    
+    List<ViewUserNewsHistory> GetNewsHistory(string email);
 }

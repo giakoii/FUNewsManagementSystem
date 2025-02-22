@@ -9,4 +9,6 @@ public interface ISystemAccountRepository : IRepository<SystemAccount>
     Task<VwAccountProfile> GetAccountProfileAsync(string email);
     
     bool DeleteAccount(short id);
+    
+    List<ViewUserNewsHistory> GetNewsHistory(string email);
 }

@@ -1,11 +1,11 @@
 using System.Security.Claims;
+using BusinessObject.Service;
 using BusinessObject.SystemAccountService;
-using FUNewsManagementSystem.ViewModels;
+using FUNewsManagementSystem.Models.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace FUNewsManagementSystem.Controllers
 {
@@ -13,14 +13,16 @@ namespace FUNewsManagementSystem.Controllers
     public class UserController : Controller
     {
         private readonly ISystemAccountService _systemAccountService;
+        private readonly INewArticleService _newArticleService;
 
         /// <summary>
         /// Contructor
         /// </summary>
         /// <param name="systemAccountService"></param>
-        public UserController(ISystemAccountService systemAccountService)
+        public UserController(ISystemAccountService systemAccountService, INewArticleService newArticleService)
         {
             _systemAccountService = systemAccountService;
+            _newArticleService = newArticleService;
         }
 
         /// <summary>
@@ -31,21 +33,43 @@ namespace FUNewsManagementSystem.Controllers
         public ActionResult Index()
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            
+
             if (email == null)
             {
                 return RedirectToAction("Login", "Home");
             }
 
-            // Get user
+            // Get user profile
             var user = _systemAccountService.GetAccountProfileByEmail(email);
-
             var userViewModel = new UserProfileViewModel
             {
                 Email = user.AccountEmail,
                 Name = user.AccountName,
             };
-            return View(userViewModel);
+
+            // Get news history
+            // Get news history
+            var newsHistory = _systemAccountService.GetNewsHistory(email);
+
+            var newsHistoryViewModel = newsHistory.Select(item => new NewsArticleHistoryViewModel
+            {
+                NewsArticleId = item.NewsArticleId,
+                NewsTitle = item.NewsTitle,
+                CreatedDate = item.CreatedDate,
+                NewsContent = item.NewsContent,
+                NewsSource = item.NewsSource,
+                CategoryId = item.CategoryId,
+            }).ToList();
+
+            var viewModel = new UserProfileWithNewsHistoryViewModel
+            {
+                UserProfile = userViewModel,
+                NewsArticleHistory = newsHistoryViewModel
+            };
+
+            return View(viewModel);
+
+            return View(viewModel);
         }
 
         /// <summary>
@@ -92,5 +116,31 @@ namespace FUNewsManagementSystem.Controllers
             
             return RedirectToAction("Index");
         }
+        
+        [HttpGet]
+        public IActionResult NewsHistory()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (email == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var newsHistory = _systemAccountService.GetNewsHistory(email);
+
+            if (!newsHistory.Any())
+            {
+                return View(new List<NewsArticleHistoryViewModel>());
+            }
+
+            var newsHistoryViewModel = newsHistory.Select(item => new NewsArticleHistoryViewModel
+            {
+                
+            }).ToList();
+
+            return View(newsHistoryViewModel);
+        }
+
     }
 }

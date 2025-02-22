@@ -10,7 +10,6 @@ namespace BusinessObject.SystemAccountService;
 public class SystemAccountServiceImp : ISystemAccountService
 {
     private readonly ISystemAccountRepository _systemAccountRepository;
-    private readonly ISystemAccountService _systemAccountService;
 
     public SystemAccountServiceImp(ISystemAccountRepository systemAccountRepository)
     {
@@ -113,5 +112,26 @@ public class SystemAccountServiceImp : ISystemAccountService
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Get News History
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public List<ViewUserNewsHistory> GetNewsHistory(string email)
+    {
+        List<ViewUserNewsHistory> newsHistories;
+        try
+        {
+            newsHistories = _systemAccountRepository.GetNewsHistory(email);
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+
+        return newsHistories;
     }
 }
