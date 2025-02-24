@@ -9,11 +9,11 @@ namespace FUNewsManagementSystem.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private readonly IAccountService _accountService;
+        private readonly ISystemAccountService _systemAccountService;
 
-        public AdminController(IAccountService accountService)
+        public AdminController(ISystemAccountService systemAccountService)
         {
-            _accountService = accountService;
+            _systemAccountService = systemAccountService;
         }
 
         public IActionResult Dashboard()
@@ -23,7 +23,7 @@ namespace FUNewsManagementSystem.Controllers
 
         public async Task<IActionResult> ManageUsers()
         {
-            var users = await _accountService.GetSystemAccountsAsync();
+            var users = await _systemAccountService.GetSystemAccountsAsync();
             return View("_ManageUsers", users);
         }
 
@@ -33,7 +33,7 @@ namespace FUNewsManagementSystem.Controllers
             if (account == null)
                 return BadRequest("Invalid account data.");
 
-            var result = await _accountService.CreateSystemAccountAsync(account);
+            var result = await _systemAccountService.CreateSystemAccountAsync(account);
             if (!result)
                 return BadRequest("Failed to create user.");
             return Ok("User created successfully.");
@@ -42,7 +42,7 @@ namespace FUNewsManagementSystem.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(short id)
         {
-            var result = await _accountService.DeleteSystemAccountAsync(id);
+            var result = await _systemAccountService.DeleteSystemAccountAsync(id);
             if (!result)
                 return BadRequest("Failed to delete user.");
 
@@ -56,7 +56,7 @@ namespace FUNewsManagementSystem.Controllers
             if (account == null)
                 return BadRequest("Invalid account data.");
 
-            await _accountService.UpdateSystemAccountAsync(account);
+            await _systemAccountService.UpdateSystemAccountAsync(account);
             return Ok("User updated successfully.");
         }
     }

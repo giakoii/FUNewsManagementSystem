@@ -8,7 +8,7 @@ using DataAccessObject.Models;
 
 namespace DataAccessObject.Repositories
 {
-    public class NewArticleRepository : BaseRepository<NewsArticle>
+    public class NewArticleRepository : BaseRepository<NewsArticle, string>, INewArticelRepository
     {
         public NewArticleRepository(FUNewsManagementSystemContext context) : base(context)
         {

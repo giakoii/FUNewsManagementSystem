@@ -9,17 +9,17 @@ namespace FUNewsManagementSystem.Controllers
     [Authorize(Roles = "Staff")]
     public class ProfileController : Controller
     {
-        private readonly IAuthService _authService;
+        private readonly ISystemAccountService _systemAccountService;
 
-        public ProfileController(IAuthService authService)
+        public ProfileController(ISystemAccountService systemAccountService)
         {
-            _authService = authService;
+            _systemAccountService = systemAccountService;
         }
 
         public IActionResult Index()
         {
             var userId = short.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = _authService.GetUserById(userId);
+            var user = _systemAccountService.GetById(userId);
             return View(user);
         }
 
@@ -27,7 +27,7 @@ namespace FUNewsManagementSystem.Controllers
         public IActionResult Update(SystemAccount user)
         {
             // Validation và update logic
-            _authService.UpdateUser(user);
+            _systemAccountService.UpdateUser(user);
             return RedirectToAction(nameof(Index));
         }
     }

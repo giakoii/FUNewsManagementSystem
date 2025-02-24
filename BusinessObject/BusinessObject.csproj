@@ -23,8 +23,5 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DataAccessObject\DataAccessObject.csproj" />
-      <Folder Include="Categories\" />
-      <Folder Include="NewsAticles\" />
-      <Folder Include="Tags\" />
     </ItemGroup>
 </Project>

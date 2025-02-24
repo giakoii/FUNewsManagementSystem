@@ -2,7 +2,6 @@ using BusinessObject.Service;
 using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using BusinessObject.SystemAccountService;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,22 +13,13 @@ builder.Services.AddDbContext<FUNewsManagementSystemContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<NewArticleRepository>();
+builder.Services.AddScoped(typeof(IBaseService<,>), typeof(BaseService<,>));
 builder.Services.AddScoped<INewArticleService, NewArticleService>();
-builder.Services.AddScoped<TagsRepository>();
-builder.Services.AddScoped<ITagService, TagService>();
-builder.Services.AddScoped<CategoryRepository>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<SystemAccountRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
 builder.Services.AddScoped<FUNewsManagementSystemContext>();
-builder.Services.AddScoped<IRepository<Category>, BaseRepository<Category>>();
-builder.Services.AddScoped<IRepository<Tag>, BaseRepository<Tag>>();
 builder.Services.Configure<AdminAccount>(builder.Configuration.GetSection("AdminAccount"));
-builder.Services.AddScoped<AccountRepository>();
-builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
      .AddCookie(options =>
@@ -39,10 +29,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
          options.SlidingExpiration = true;
          options.Cookie.IsEssential = true;
      });
-
-builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped(typeof(BaseRepository<,>));
 builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
-builder.Services.AddScoped<ISystemAccountService, SystemAccountServiceImp>();
+builder.Services.AddScoped<INewArticelRepository, NewArticleRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITagRepository, TagsRepository>();
 
 var app = builder.Build();
 

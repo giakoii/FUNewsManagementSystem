@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessObject.Repositories
 {
-    public class TagsRepository : BaseRepository<Tag>
+    public class TagsRepository : BaseRepository<Tag, int>, ITagRepository
     {
         public TagsRepository(FUNewsManagementSystemContext context) : base(context)
         {

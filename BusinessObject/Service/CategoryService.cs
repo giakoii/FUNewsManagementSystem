@@ -1,67 +1,79 @@
 using DataAccessObject.Models;
 using DataAccessObject.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessObject.Service
 {
-    public class CategoryService : ICategoryService
+    public class CategoryService : BaseService<Category, short>, ICategoryService
     {
+        private readonly INewArticleService _newArticleService;
 
-        private readonly IRepository<Category> _categoryRepository;
-        private readonly FUNewsManagementSystemContext _context;
-        public CategoryService(IRepository<Category> categoryRepository, FUNewsManagementSystemContext context)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="newArticleService"></param>
+        public CategoryService(BaseRepository<Category, short> repository, INewArticleService newArticleService) : base(repository)
         {
-            _categoryRepository = categoryRepository;
-            _context=context;
+            _newArticleService = newArticleService;
         }
 
-        public bool AddCategory(Category category) => _categoryRepository.Add(category);
-        public void UpdateCategory(Category category) => _categoryRepository.Update(category);
+        /// <summary>
+        /// Add new category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public bool AddCategory(Category category)
+        {
+            return Repository.Add(category);
+        }
+
+        /// <summary>
+        /// Update category
+        /// </summary>
+        /// <param name="category"></param>
+        public void UpdateCategory(Category category)
+        {
+            Repository.Update(category);
+        }
+        
+        /// <summary>
+        /// Delete category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool DeleteCategory(short id)
         {
             // Check if category is used in any article
-            var isUsed = _context.NewsArticles
-                .Any(a => a.CategoryId == id);
+            var isUsed = GetBy(x => x.CategoryId == id);
 
-            if (isUsed)
+            if (isUsed.Any())
             {
                 return false;
             }
 
-            return _categoryRepository.Delete(id);
+            return Repository.Delete(id);
         }
 
-
-        public IEnumerable<Category> GetAllCategories()
+        /// <summary>
+        /// Check if category is used in any article
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        public bool IsCategoryInUse(short categoryId)
         {
-            return _categoryRepository.GetAll() ?? Enumerable.Empty<Category>();
+            return GetBy(x => x.CategoryId == categoryId, 
+                false,
+                x => x.NewsArticles).Any();
         }
 
-        public Category GetCategoryById(short id) => _categoryRepository.GetById(id);
-
-        public bool IsCategoryInUse(short categoryId) =>
-            _categoryRepository.GetAll(x => x.CategoryId == categoryId && x.NewsArticles.Any()).Any();
-
-        private readonly CategoryRepository _categoryRepository;
-
-        public CategoryService(CategoryRepository categoryRepository)
+        /// <summary>
+        /// Get all sub category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        public IEnumerable<Category> GetAllSubCategory(short categoryId)
         {
-            _categoryRepository = categoryRepository;
-        }
-
-        public IEnumerable<Category> GetAllCategory()
-        {
-            return _categoryRepository.GetAll();
-        }
-
-        public IEnumerable<Category> GetAllSubCategory(int categoryID)
-        {
-            return _categoryRepository.GetAll(x => x.ParentCategoryId == categoryID, true, null);
+            return GetBy(x => x.ParentCategoryId == categoryId, false, null);
         }
     }
 }

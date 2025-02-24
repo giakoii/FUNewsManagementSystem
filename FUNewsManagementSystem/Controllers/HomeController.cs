@@ -13,12 +13,17 @@ namespace FUNewsManagementSystem.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IAuthService _authService;
+    private readonly ISystemAccountService _systemAccountService;
 
-    public HomeController(ILogger<HomeController> logger, IAuthService authService)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="systemAccountService"></param>
+    public HomeController(ILogger<HomeController> logger, ISystemAccountService systemAccountService)
     {
         _logger = logger;
-        _authService = authService;
+        _systemAccountService = systemAccountService;
     }
 
     [HttpGet]
@@ -44,13 +49,14 @@ public class HomeController : Controller
             return View("Index", request);
         }
 
-        var user = await _authService.LoginAsync(request.Email, request.Password);
+        var user = await _systemAccountService.LoginAsync(request.Email, request.Password);
 
         if (user == null)
         {
             ModelState.AddModelError("", "Invalid email or password");
-            user = await _authService.LoginAdmin(request.Email, request.Password);
-            if (user == null) return View("Index", request);
+            user = await _systemAccountService.LoginAdmin(request.Email, request.Password);
+            if (user == null) 
+                return View("Index", request);
         }
 
         string role = "";
@@ -69,10 +75,10 @@ public class HomeController : Controller
         }
 
         var claims = new List<Claim>
-        {    new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
-            new Claim(ClaimTypes.Name, user.AccountName),
-            new Claim(ClaimTypes.Email, user.AccountEmail),
+        {    
             new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
+            new Claim(ClaimTypes.Name, user.AccountName!),
+            new Claim(ClaimTypes.Email, user.AccountEmail!),
             new Claim(ClaimTypes.Role, role)
         };
 
@@ -88,12 +94,14 @@ public class HomeController : Controller
 
         return (role == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("", "NewArticle");
     }
+    
     [HttpGet]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
+    
     public IActionResult Privacy()
     {
         return View();

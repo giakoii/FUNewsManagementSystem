@@ -2,11 +2,12 @@ using DataAccessObject.Models;
 
 namespace DataAccessObject.Repositories;
 
-public interface ISystemAccountRepository : IRepository<SystemAccount>
+public interface ISystemAccountRepository : IRepository<SystemAccount, short>
 {
-    VwAccountProfile GetAccountProfile(string email);
+    public SystemAccount GetAccountByEmail(string email);
     
-    Task<VwAccountProfile> GetAccountProfileAsync(string email);
-    
-    bool DeleteAccount(short id);
+    List<ViewUserNewsHistory> GetNewsHistory(short id);
+
+    public bool DeleteAccount(short id);
+
 }

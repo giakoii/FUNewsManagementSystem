@@ -1,11 +1,10 @@
 using System.Security.Claims;
-using BusinessObject.SystemAccountService;
-using FUNewsManagementSystem.ViewModels;
+using BusinessObject.Service;
+using FUNewsManagementSystem.Models.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace FUNewsManagementSystem.Controllers
 {
@@ -15,7 +14,7 @@ namespace FUNewsManagementSystem.Controllers
         private readonly ISystemAccountService _systemAccountService;
 
         /// <summary>
-        /// Contructor
+        /// Constructor
         /// </summary>
         /// <param name="systemAccountService"></param>
         public UserController(ISystemAccountService systemAccountService)
@@ -30,22 +29,36 @@ namespace FUNewsManagementSystem.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            
-            if (email == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
+            var id = short.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            // Get user
-            var user = _systemAccountService.GetAccountProfileByEmail(email);
-
+            // Get user profile
+            var user = _systemAccountService.GetById(id);
             var userViewModel = new UserProfileViewModel
             {
                 Email = user.AccountEmail,
                 Name = user.AccountName,
             };
-            return View(userViewModel);
+
+            // Get news history
+            var newsHistory = _systemAccountService.GetNewsHistory(id);
+
+            var newsHistoryViewModel = newsHistory.Select(item => new NewsArticleHistoryViewModel
+            {
+                NewsArticleId = item.NewsArticleId,
+                NewsTitle = item.NewsTitle,
+                CreatedDate = item.CreatedDate,
+                NewsContent = item.NewsContent,
+                NewsSource = item.NewsSource,
+                CategoryId = item.CategoryId,
+            }).ToList();
+
+            var viewModel = new UserProfileWithNewsHistoryViewModel
+            {
+                UserProfile = userViewModel,
+                NewsArticleHistory = newsHistoryViewModel
+            };
+
+            return View(viewModel);
         }
 
         /// <summary>
@@ -58,14 +71,18 @@ namespace FUNewsManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _systemAccountService.GetAccountByEmail(userProfile.Email);
-                if (user != null)
+                if (short.TryParse(User.FindFirst(ClaimTypes.NameIdentifier).Value, out short id))
                 {
-                    user.AccountName = userProfile.Name;
-                    _systemAccountService.UpdateAccount(user);
+                    var user = _systemAccountService.GetById(id);
+                    if (user != null)
+                    {
+                        user.AccountName = userProfile.Name;
+                        _systemAccountService.UpdateUser(user);
+                    }
+                    return RedirectToAction("Index");
                 }
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Error", "Home");
         }
 
         /// <summary>
@@ -77,10 +94,10 @@ namespace FUNewsManagementSystem.Controllers
         public async Task<IActionResult> Delete(string email)
         {
             var userDelete = _systemAccountService.GetAccountByEmail(email);
-            
+
             if (userDelete != null)
             {
-                _systemAccountService.DeleteAccount(userDelete.AccountId);
+                _systemAccountService.DeleteSystemAccountAsync(userDelete.AccountId);
 
                 // Logout if user delete account
                 if (User.Identity != null && User.Identity.Name == userDelete.AccountName)
@@ -89,7 +106,7 @@ namespace FUNewsManagementSystem.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            
+
             return RedirectToAction("Index");
         }
     }

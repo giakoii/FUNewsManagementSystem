@@ -1,142 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccessObject.Models;
+﻿using DataAccessObject.Models;
 using DataAccessObject.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace BusinessObject.Service
 {
-    public class NewArticleService : INewArticleService
+    /// <summary>
+    /// NewArticleService - Service for NewsArticle
+    /// </summary>
+    public class NewArticleService : BaseService<NewsArticle, string>, INewArticleService
     {
-        private readonly NewArticleRepository _newArticleRepository;
-        private readonly FUNewsManagementSystemContext _context;
-        public NewArticleService(NewArticleRepository newArticleRepository, FUNewsManagementSystemContext context)
+        private readonly ITagService _tagService;
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="tagService"></param>
+        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService) : base(repository)
         {
-            _newArticleRepository = newArticleRepository;
-            _context = context;
+            _tagService = tagService;
         }
-
+        
+        /// <summary>
+        /// Add new article
+        /// </summary>
+        /// <param name="newsArticle"></param>
+        /// <returns></returns>
         public bool AddNewsArticle(NewsArticle newsArticle)
         {
+            newsArticle.NewsArticleId = "ART-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            newsArticle.CreatedDate = DateTime.Now;
+            newsArticle.NewsStatus = true;
 
-            try
+            var tagIds = newsArticle.Tags.Select(t => t.TagId).ToList();
+            var existingTags = _tagService.GetBy(x => tagIds.Contains(x.TagId));
+            newsArticle.Tags.Clear();
+            
+            foreach (var tag in existingTags)
             {
-                // Generate unique ID
-                newsArticle.NewsArticleId = GenerateArticleId();
-
-                // Set default values
-                newsArticle.CreatedDate = DateTime.Now;
-                newsArticle.NewsStatus = true;
-
-                // Attach existing tags to prevent duplication
-                var existingTags = newsArticle.Tags.ToList();
-                newsArticle.Tags.Clear();
-
-                foreach (var tag in existingTags)
-                {
-                    var existingTag = _context.Tags.Find(tag.TagId);
-                    if (existingTag != null)
-                    {
-                        newsArticle.Tags.Add(existingTag);
-                    }
-                }
-
-                _context.NewsArticles.Add(newsArticle);
-                _context.SaveChanges();
-                return true;
+                newsArticle.Tags.Add(tag);
             }
-            catch
-            {
-                return false;
-            }
-
-            return _newArticleRepository.Add(newsArticle);
-
+            Repository.Add(newsArticle);
+            return true;
         }
 
-        private string GenerateArticleId()
-        {
-            return "ART-" + DateTime.Now.ToString("yyyyMMddHHmmss");
-        }
+        /// <summary>
+        /// Delete article
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool DeleteNewsArticle(string id)
         {
-            try
-            {
-                var article = _context.NewsArticles
-                    .Include(a => a.Tags)
-                    .FirstOrDefault(a => a.NewsArticleId == id);
+            var article = Repository
+                .GetBy(x => x.NewsArticleId.Equals(id), 
+                    true,
+                    a => a.Tags)
+                .FirstOrDefault(a => a.NewsArticleId == id);
 
-                if (article == null)
-                {
-                    return false;
-                }
-
-                _context.NewsArticles.Remove(article);
-                _context.SaveChanges();
-                return true;
-            }
-            catch
+            if (article == null)
             {
                 return false;
             }
+
+            Repository.Delete(id);
+            return true;
         }
 
-        public IEnumerable<NewsArticle> GetAllNewsArticles()
-        {
-            return _newArticleRepository.GetAll(
-            null,
-            true,
-            x => x.Category,
-            x => x.Tags
-          ).ToList();
-        }
-
-        public NewsArticle GetNewsArticleById(string id)
-        {
-
-            return _newArticleRepository.GetAll(
-                x => x.NewsArticleId == id,
-                true, // isTracking
-                x => x.Category,
-                x => x.Tags
-            ).FirstOrDefault();
-
-            return _newArticleRepository.GetById(id);
-        }
-
+        /// <summary>
+        /// Update article
+        /// </summary>
+        /// <param name="newsArticle"></param>
         public void UpdateNewsArticle(NewsArticle newsArticle)
         {
-            try
+            var existingArticle = Repository
+                .GetBy(x => x.NewsArticleId == newsArticle.NewsArticleId, false, t => t.Tags)
+                .FirstOrDefault();
+                
+            if (existingArticle != null)
             {
-                var existingArticle = _context.NewsArticles
-                    .Include(a => a.Tags)
-                    .FirstOrDefault(a => a.NewsArticleId == newsArticle.NewsArticleId);
+                existingArticle.NewsTitle = newsArticle.NewsTitle;
+                existingArticle.Headline = newsArticle.Headline;
+                existingArticle.NewsContent = newsArticle.NewsContent;
+                existingArticle.NewsSource = newsArticle.NewsSource;
+                existingArticle.CategoryId = newsArticle.CategoryId;
+                existingArticle.ModifiedDate = DateTime.Now;
 
-                if (existingArticle != null)
+                // Clear existing tags
+                existingArticle.Tags.Clear();
+                foreach (var tag in newsArticle.Tags)
                 {
-                    existingArticle.NewsTitle = newsArticle.NewsTitle;
-                    existingArticle.Headline = newsArticle.Headline;
-                    existingArticle.NewsContent = newsArticle.NewsContent;
-                    existingArticle.NewsSource = newsArticle.NewsSource;
-                    existingArticle.CategoryId = newsArticle.CategoryId;
-                    existingArticle.ModifiedDate = DateTime.Now;
-
-                    // Cập nhật tags
-                    existingArticle.Tags.Clear();
-                    foreach (var tag in newsArticle.Tags)
-                    {
-                        existingArticle.Tags.Add(tag);
-                    }
-
-                    _context.SaveChanges();
+                    existingArticle.Tags.Add(tag);
                 }
-            }
-            catch
-            {
-                throw;
+
+                Repository.Add(existingArticle);
             }
         }
     }

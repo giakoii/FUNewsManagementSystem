@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessObject.Repositories
 {
-    public class CategoryRepository : BaseRepository<Category>
+    public class CategoryRepository : BaseRepository<Category, short>, ICategoryRepository
     {
         public CategoryRepository(FUNewsManagementSystemContext context) : base(context)
         {
