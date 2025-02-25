@@ -9,7 +9,7 @@ namespace BusinessObject.Service
     public class NewArticleService : BaseService<NewsArticle, string>, INewArticleService
     {
         private readonly ITagService _tagService;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -19,7 +19,7 @@ namespace BusinessObject.Service
         {
             _tagService = tagService;
         }
-        
+
         /// <summary>
         /// Add new article
         /// </summary>
@@ -27,18 +27,8 @@ namespace BusinessObject.Service
         /// <returns></returns>
         public bool AddNewsArticle(NewsArticle newsArticle)
         {
-            newsArticle.NewsArticleId = "ART-" + DateTime.Now.ToString("yyyyMMddHHmmss");
             newsArticle.CreatedDate = DateTime.Now;
             newsArticle.NewsStatus = true;
-
-            var tagIds = newsArticle.Tags.Select(t => t.TagId).ToList();
-            var existingTags = _tagService.GetBy(x => tagIds.Contains(x.TagId));
-            newsArticle.Tags.Clear();
-            
-            foreach (var tag in existingTags)
-            {
-                newsArticle.Tags.Add(tag);
-            }
             Repository.Add(newsArticle);
             return true;
         }
@@ -51,7 +41,7 @@ namespace BusinessObject.Service
         public bool DeleteNewsArticle(string id)
         {
             var article = Repository
-                .GetBy(x => x.NewsArticleId.Equals(id), 
+                .GetBy(x => x.NewsArticleId.Equals(id),
                     true,
                     a => a.Tags)
                 .FirstOrDefault(a => a.NewsArticleId == id);
@@ -60,8 +50,8 @@ namespace BusinessObject.Service
             {
                 return false;
             }
-
-            Repository.Delete(id);
+            article.Tags.Clear();
+            Repository.Delete(article);
             return true;
         }
 
@@ -71,10 +61,11 @@ namespace BusinessObject.Service
         /// <param name="newsArticle"></param>
         public void UpdateNewsArticle(NewsArticle newsArticle)
         {
+            var newTags = newsArticle.Tags.ToList();
             var existingArticle = Repository
-                .GetBy(x => x.NewsArticleId == newsArticle.NewsArticleId, false, t => t.Tags)
+                .GetBy(x => x.NewsArticleId == newsArticle.NewsArticleId, true, a => a.Tags)
                 .FirstOrDefault();
-                
+
             if (existingArticle != null)
             {
                 existingArticle.NewsTitle = newsArticle.NewsTitle;
@@ -83,15 +74,12 @@ namespace BusinessObject.Service
                 existingArticle.NewsSource = newsArticle.NewsSource;
                 existingArticle.CategoryId = newsArticle.CategoryId;
                 existingArticle.ModifiedDate = DateTime.Now;
-
-                // Clear existing tags
                 existingArticle.Tags.Clear();
-                foreach (var tag in newsArticle.Tags)
+                foreach (var tag in newTags)
                 {
                     existingArticle.Tags.Add(tag);
                 }
-
-                Repository.Add(existingArticle);
+                Repository.Update(existingArticle);
             }
         }
     }

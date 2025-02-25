@@ -25,8 +25,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item ms-auto">
+                        <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">User Profile</a>
+                        </li>
+                        <li class="nav-item ms-auto">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <!-- Hiển thị tên người dùng và nút Logout thay vì dropdown -->
+                                <div class="d-flex align-items-center">
+                                    <span class="text-white me-3">Hello, @User.Identity.Name!</span>
+                                    <form asp-controller="Home" asp-action="Logout" method="post" class="mb-0">
+                                        <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                                    </form>
+                                </div>
+                            }
                         </li>
                     </ul>
                 </div>

@@ -1,12 +1,12 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using BusinessObject.Enum;
+using BusinessObject.Service;
 using FUNewsManagementSystem.Models;
 using FUNewsManagementSystem.Models.ViewModel;
-using BusinessObject.Service;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using BusinessObject.Enum;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace FUNewsManagementSystem.Controllers;
 
@@ -31,7 +31,7 @@ public class HomeController : Controller
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            return RedirectToAction("Index","NewArticle");
+            return RedirectToAction("Index", "NewArticle");
         }
 
         return View(new LoginRequest());
@@ -55,7 +55,7 @@ public class HomeController : Controller
         {
             ModelState.AddModelError("", "Invalid email or password");
             user = await _systemAccountService.LoginAdmin(request.Email, request.Password);
-            if (user == null) 
+            if (user == null)
                 return View("Index", request);
         }
 
@@ -75,7 +75,7 @@ public class HomeController : Controller
         }
 
         var claims = new List<Claim>
-        {    
+        {
             new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
             new Claim(ClaimTypes.Name, user.AccountName!),
             new Claim(ClaimTypes.Email, user.AccountEmail!),
@@ -88,20 +88,20 @@ public class HomeController : Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
         new AuthenticationProperties
         {
-           IsPersistent = true,
-           ExpiresUtc = DateTime.UtcNow.AddDays(7)
+            IsPersistent = true,
+            ExpiresUtc = DateTime.UtcNow.AddDays(7)
         });
 
         return (role == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("", "NewArticle");
     }
-    
-    [HttpGet]
+
+    [HttpPost]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
-    
+
     public IActionResult Privacy()
     {
         return View();
