@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-
+﻿using Microsoft.EntityFrameworkCore;
 namespace DataAccessObject.Models;
 
 public partial class FUNewsManagementSystemContext : DbContext
@@ -21,11 +18,15 @@ public partial class FUNewsManagementSystemContext : DbContext
 
     public virtual DbSet<SystemAccount> SystemAccounts { get; set; }
 
+    
     public virtual DbSet<Tag> Tags { get; set; }
-
+    
+    
+    public virtual DbSet<ViewUserNewsHistory> ViewUserNewsHistories { get; set; }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;Database=FUNewsManagement;User Id=sa;Password=Gi@khoi221203;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=localhost;Database=FUNewsManagement;User Id=sa;Password=12345;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,7 +119,21 @@ public partial class FUNewsManagementSystemContext : DbContext
             entity.Property(e => e.Note).HasMaxLength(400);
             entity.Property(e => e.TagName).HasMaxLength(50);
         });
+        
+        modelBuilder.Entity<ViewUserNewsHistory>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("View_UserNewsHistory");
 
+            entity.Property(e => e.CreatedByName).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.NewsArticleId).HasMaxLength(20);
+            entity.Property(e => e.NewsContent).HasMaxLength(4000);
+            entity.Property(e => e.NewsSource).HasMaxLength(400);
+            entity.Property(e => e.NewsTitle).HasMaxLength(400);
+        });
+        
         OnModelCreatingPartial(modelBuilder);
     }
 

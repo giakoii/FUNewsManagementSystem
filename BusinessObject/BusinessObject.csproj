@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -7,14 +7,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DataAccessObject\DataAccessObject.csproj" />
+      <Compile Remove="Categories\**" />
+      <Compile Remove="NewsAticles\**" />
+      <Compile Remove="SystemAccount\**" />
+      <Compile Remove="Tags\**" />
+      <EmbeddedResource Remove="Categories\**" />
+      <EmbeddedResource Remove="NewsAticles\**" />
+      <EmbeddedResource Remove="SystemAccount\**" />
+      <EmbeddedResource Remove="Tags\**" />
+      <None Remove="Categories\**" />
+      <None Remove="NewsAticles\**" />
+      <None Remove="SystemAccount\**" />
+      <None Remove="Tags\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Categories\" />
-      <Folder Include="NewsAticles\" />
-      <Folder Include="SystemAccount\" />
-      <Folder Include="Tags\" />
+      <ProjectReference Include="..\DataAccessObject\DataAccessObject.csproj" />
     </ItemGroup>
-
 </Project>

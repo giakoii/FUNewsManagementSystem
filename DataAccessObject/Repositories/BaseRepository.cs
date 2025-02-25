@@ -4,14 +4,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessObject.Repositories;
 
-public class BaseRepository<T> : IRepository<T> where T : class
+/// <summary>
+/// BaseRepository - Base class for all repositories
+/// </summary>
+/// <typeparam name="Entity"></typeparam>
+/// <typeparam name="Type"></typeparam>
+public class BaseRepository<Entity, Type> : IRepository<Entity, Type> where Entity : class
 {
-    private readonly FUNewsManagementSystemContext _context;
+    protected readonly FUNewsManagementSystemContext _context;
     
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="context"></param>
     public BaseRepository(FUNewsManagementSystemContext context)
     {
         _context = context;
     }
+    
+    private DbSet<Entity> DbSet => _context.Set<Entity>();
+
+    public virtual IQueryable<Entity> Table => this.DbSet;
     
     /// <summary>
     /// Get all entities
@@ -20,9 +33,9 @@ public class BaseRepository<T> : IRepository<T> where T : class
     /// <param name="isTracking"></param>
     /// <param name="includes"></param>
     /// <returns></returns>
-    public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate = null, bool isTracking = false, params Expression<Func<T, object>>[] includes)
+    public IQueryable<Entity> GetBy(Expression<Func<Entity, bool>> predicate = null, bool isTracking = false, params Expression<Func<Entity, object>>[] includes)
     {
-        IQueryable<T> query = _context.Set<T>();
+        IQueryable<Entity> query = _context.Set<Entity>();
 
         if (predicate != null)
         {
@@ -40,15 +53,57 @@ public class BaseRepository<T> : IRepository<T> where T : class
         }
         return query;
     }
+    
+    public Task<IQueryable<Entity>> GetByAsync(Expression<Func<Entity, bool>> predicate = null!,bool isTracking = false, params Expression<Func<Entity, object>>[] includes)
+    {
+        IQueryable<Entity> query = DbSet;
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+        if (includes != null)
+        {
+            query = includes.Aggregate(query, (current, inc) => current.Include(inc));
+        }
+        if (!isTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return Task.FromResult(query);
+    }
+
 
     /// <summary>
     /// Get entity by id
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public T GetById(int id)
+    public Entity GetById(Type id)
     {
-        return _context.Set<T>().Find(id);
+        return DbSet.Find(id);
+    }
+    
+    /// <summary>
+    /// Get entity by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<Entity> GetByIdAsync(Type id)
+    {
+        return await DbSet.FindAsync(id);
+    }
+    
+    /// <summary>
+    /// Get entity by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="members"></param>
+    /// <typeparam name="TResult"></typeparam>
+    /// <returns></returns>
+    public Task<TResult?> GetByIdAsync<TResult>(Type id, Expression<Func<Entity, TResult>> members)
+    {
+        return DbSet.Where(e => EF.Property<Type>(e, "Id").Equals(id)).Select(members).FirstOrDefaultAsync();
     }
 
     /// <summary>
@@ -56,7 +111,7 @@ public class BaseRepository<T> : IRepository<T> where T : class
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public bool Add(T entity)
+    public bool Add(Entity entity)
     {
         _context.Add(entity);
         _context.SaveChanges();
@@ -67,26 +122,30 @@ public class BaseRepository<T> : IRepository<T> where T : class
     /// Update entity
     /// </summary>
     /// <param name="entity"></param>
-    public void Update(T entity)
+    public void Update(Entity entity)
     {
         _context.Update(entity);
         _context.SaveChanges();
     }
-
+    
     /// <summary>
-    /// Delete entity by id
+    /// Delete entity
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="entity"></param>
     /// <returns></returns>
-    public bool Delete(int id)
+    public bool Delete(Entity entity)
     {
-        var entity = _context.Set<T>().Find(id);
+        _context.Remove(entity);
+        return _context.SaveChanges() > 0;
+    }
+    
+    public bool Delete(Type id)
+    {
+        var entity = GetById(id);
         if (entity == null)
         {
             return false;
         }
-        _context.Remove(entity);
-        _context.SaveChanges();
-        return true;
+        return Delete(entity);
     }
 }
