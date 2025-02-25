@@ -1,0 +1,171 @@
+﻿@model IEnumerable<DataAccessObject.Models.Category>
+
+@{
+    ViewData["Title"] = "Category List";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<a asp-controller="NewArticle" asp-action="Index" class="btn btn-secondary mb-3">
+    Manage Article
+</a>
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        @if (TempData["ToastMessage"] != null)
+        {
+            var toastType = TempData["ToastType"]?.ToString() ?? "info";
+            <div class="toast align-items-center text-bg-@toastType border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        @TempData["ToastMessage"]
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<button id="btnAddArticle" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+    Add New Category
+</button>
+
+<div id="tableLayout">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Tên danh mục</th>
+                <th>Mô tả</th>
+                <th>Status</th>
+                <th>Parent Category</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.CategoryId</td>
+                    <td>@category.CategoryName</td>
+                    <td>@category.CategoryDesciption</td>
+                    <td>
+                        @if (category.IsActive ?? false)
+                        {
+                            <span class="badge bg-success">Open</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Close</span>
+                        }
+                    </td>
+                    <td>
+                        @category.ParentCategory?.CategoryName
+                    </td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@category.CategoryId" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this category?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Add Category -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Category" asp-action="CreateCategory" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Category Name -->
+                    <div class="mb-3">
+                        <label for="CategoryName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="CategoryName" name="CategoryName" required />
+                    </div>
+
+                    <!-- Category Description -->
+                    <div class="mb-3">
+                        <label for="CategoryDesciption" class="form-label">Description</label>
+                        <textarea class="form-control" id="CategoryDesciption" name="CategoryDesciption" rows="3"></textarea>
+                    </div>
+
+                    <!-- Toggle Switch to Add New Parent Category -->
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="toggleNewParentCategory" name="isAddParent" value="true">
+                        <label class="form-check-label" for="toggleNewParentCategory">Add New Parent Category</label>
+                    </div>
+
+                    <!-- Select Existing Parent Category -->
+                    <div class="mb-3" id="existingParentCategory">
+                        <label for="ParentCategoryId" class="form-label">Parent Category</label>
+                        <select class="form-select" id="ParentCategoryId" name="ParentCategoryId">
+                            @foreach (var category in Model.Where(c => c.ParentCategoryId == null || c.CategoryId == c.ParentCategoryId))
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Fields for New Parent Category -->
+                    <div id="newParentCategoryFields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="CategoryParentName" class="form-label">New Parent Category Name</label>
+                            <input type="text" class="form-control" id="CategoryParentName" name="CategoryParentName" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="CategoryParentDesciption" class="form-label">New Parent Category Description</label>
+                            <textarea class="form-control" id="CategoryParentDesciption" name="CategoryParentDesciption" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleSwitch = document.getElementById('toggleNewParentCategory');
+            const existingParentCategory = document.getElementById('existingParentCategory');
+            const newParentCategoryFields = document.getElementById('newParentCategoryFields');
+
+            function toggleFields(isChecked) {
+                if (isChecked) {
+                    existingParentCategory.style.display = 'none';
+                    newParentCategoryFields.style.display = 'block';
+                } else {
+                    existingParentCategory.style.display = 'block';
+                    newParentCategoryFields.style.display = 'none';
+                }
+            }
+
+            toggleFields(toggleSwitch.checked);
+
+            toggleSwitch.addEventListener('change', function () {
+                toggleFields(this.checked);
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+            var toastList = toastElList.map(function (toastEl) {
+                return new bootstrap.Toast(toastEl, { delay: 1500 });
+            });
+
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
+}
+

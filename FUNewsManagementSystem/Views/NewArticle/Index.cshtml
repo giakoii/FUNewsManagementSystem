@@ -72,6 +72,9 @@
     <button id="btnAddArticle" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">
         Add New Article
     </button>
+    <a asp-controller="Category" asp-action="Index" class="btn btn-secondary">
+        Manage Categories
+    </a>
 }
 <!-- ========== CARD LAYOUT ========== -->
 <!-- Đặt trong div #cardLayout, hiển thị mặc định -->
@@ -96,6 +99,20 @@
                         <p class="card-text">
                             <small class="text-muted">Article ID: @article.NewsArticleId</small>
                         </p>
+                        @if (User.IsInRole("Staff"))
+                        {
+                            <p class="card-text">
+                                <strong>Status:</strong>
+                                @if (article.NewsStatus ?? false)
+                                {
+                                    <span class="badge bg-success">Open</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Close</span>
+                                }
+                            </p>
+                        }
                     </div>
                 </div>
             }
@@ -135,6 +152,7 @@
                     <th>Category Name</th>
                     <th>Tag Name</th>
                     <th>Ngày đăng</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -155,6 +173,16 @@
                                 )
                         </td>
                         <td>
+                            @if (article.NewsStatus ?? false)
+                            {
+                                <span class="badge bg-success">Open</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Close</span>
+                            }
+                        </td>
+                        <td>
                             <button class="btn btn-warning btn-sm edit-article-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#updateArticleModal"
@@ -162,7 +190,8 @@
                                     data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
                                     data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))"
                                     data-category="@article.Category.CategoryId"
-                                    data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))">
+                                    data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))"
+                                    data-status="@article.NewsStatus">
                                 Edit
                             </button>
                             <button class="btn btn-danger btn-sm delete-article-btn"
@@ -266,7 +295,15 @@
 
                     <div class="mb-3">
                         <label for="updateNewsTitle" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="updateNewsTitle" name="NewsTitle" required />
+                        <input type="text" id="updateNewsTitle" name="NewsTitle" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="updateNewsStatus" class="form-label">Status</label>
+                        <select class="form-select w-25" id="updateNewsStatus" name="NewsStatus" required>
+                            <option value="true">Open</option>
+                            <option value="false">Close</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">
@@ -413,14 +450,14 @@
             var title = $(this).data('title');
             var content = $(this).data('content');
             var category = $(this).data('category');
-            var tags = $(this).data('tags'); // Chuỗi TagId phân tách bằng dấu phẩy
-
+            var tags = $(this).data('tags');
+            var status = $(this).data('status');
             // Điền dữ liệu vào Modal Update
             $('#updateArticleModal #updateNewsId').val(id);
             $('#updateArticleModal #updateNewsTitle').val(title);
             $('#updateArticleModal #updateNewsContent').val(content);
             $('#updateArticleModal #updateCategory').val(category);
-
+            $('#updateArticleModal #updateNewsStatus').val((status && status.toString().toLowerCase() === "true") ? "true" : "false");
             // Reset tất cả các checkbox tag
             $('#updateArticleModal input[name="SelectedTags"]').prop('checked', false);
 

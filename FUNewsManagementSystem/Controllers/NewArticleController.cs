@@ -6,12 +6,20 @@ using System.Security.Claims;
 
 namespace FUNewsManagementSystem.Controllers
 {
+    /// <summary>
+    /// https://localhost:7047/NewArticle
+    /// </summary>
     public class NewArticleController : Controller
     {
         private readonly INewArticleService _articleService;
         private readonly ITagService _tagService;
         private readonly ICategoryService _categoryService;
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="articleService"></param>
+        /// <param name="tagService"></param>
+        /// <param name="categoryService"></param>
         public NewArticleController(INewArticleService articleService, ITagService tagService,
             ICategoryService categoryService)
         {
@@ -19,17 +27,10 @@ namespace FUNewsManagementSystem.Controllers
             _tagService = tagService;
             _categoryService = categoryService;
         }
-        public string GetSearchTerm()
-        {
-            var searchTerm = HttpContext.Request.Query["searchTerm"].ToString();
-            return searchTerm;
-        }
-
         /// <summary>
         /// Get New Article
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
         [HttpGet]
         public IActionResult Index(bool isTable = false, string sortBy = "Title", string sortOrder = "asc")
         {
@@ -39,12 +40,26 @@ namespace FUNewsManagementSystem.Controllers
             ViewBag.Categories = categories;
             ViewBag.Tags = _tagService.GetBy().ToList();
 
-            var articles = _articleService.GetBy(
+            IEnumerable<NewsArticle> articles = Enumerable.Empty<NewsArticle>();
+
+            if (User.IsInRole("Lecturer"))
+            {
+                articles = _articleService.GetBy(
                 x => (x.NewsStatus == true) && (x.NewsTitle.ToLower().Contains(searchTerm.ToLower())),
                 true,
                 a => a.Category,
                 t => t.Tags
-            );
+                );
+            }
+            else if (User.IsInRole("Staff"))
+            {
+                articles = _articleService.GetBy(
+                x => x.NewsTitle.ToLower().Contains(searchTerm.ToLower()),
+                true,
+                a => a.Category,
+                t => t.Tags
+                );
+            }
 
             articles = sortBy switch
             {
@@ -61,7 +76,11 @@ namespace FUNewsManagementSystem.Controllers
             return View(articles);
         }
 
-
+        /// <summary>
+        /// Add Article
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult AddArticle(AddNewArticleRequest model)
         {
@@ -98,7 +117,12 @@ namespace FUNewsManagementSystem.Controllers
 
             return RedirectToAction("Index");
         }
-
+        /// <summary>
+        /// Update Article
+        /// </summary>
+        /// <param name="updatedArticle"></param>
+        /// <param name="SelectedTags"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult UpdateArticle(EditNewsArticleVM updatedArticle, List<int> SelectedTags)
         {
@@ -109,6 +133,7 @@ namespace FUNewsManagementSystem.Controllers
                 existingArticle.NewsTitle = updatedArticle.NewsTitle;
                 existingArticle.NewsContent = updatedArticle.NewsContent;
                 existingArticle.CategoryId = (short?)updatedArticle.SelectedCategory;
+                existingArticle.NewsStatus = updatedArticle.NewsStatus;
                 foreach (var tagId in SelectedTags)
                 {
                     var tag = _tagService.GetById(tagId);
@@ -117,12 +142,18 @@ namespace FUNewsManagementSystem.Controllers
                         existingArticle.Tags.Add(tag);
                     }
                 }
+                TempData["ToastMessage"] = "Article Update successfully!";
+                TempData["ToastType"] = "success";
                 _articleService.UpdateNewsArticle(existingArticle);
                 return RedirectToAction("Index");
             }
             return NotFound();
         }
-
+        /// <summary>
+        /// Delete Article
+        /// </summary>
+        /// <param name="newsArticleId"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult DeleteArticle(string newsArticleId)
         {
@@ -140,13 +171,19 @@ namespace FUNewsManagementSystem.Controllers
 
             return RedirectToAction("Index");
         }
-
-
+        /// <summary>
+        /// Get Current User Id
+        /// </summary>
+        /// <returns></returns>
         private short GetCurrentUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             return userIdClaim != null ? short.Parse(userIdClaim.Value) : (short)0;
         }
+        /// <summary>
+        /// Get Next Id Of Article
+        /// </summary>
+        /// <returns></returns>
         private string GetNextNewsArticleId()
         {
             var articles = _articleService.GetBy();
@@ -156,6 +193,15 @@ namespace FUNewsManagementSystem.Controllers
                 .Max(a => int.Parse(a.NewsArticleId));
 
             return (maxId + 1).ToString();
+        }
+        /// <summary>
+        /// Get Search Term
+        /// </summary>
+        /// <returns></returns>
+        public string GetSearchTerm()
+        {
+            var searchTerm = HttpContext.Request.Query["searchTerm"].ToString();
+            return searchTerm;
         }
     }
 }
