@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Security.Claims;
 using BusinessObject.Enum;
 using BusinessObject.Service;
 using FUNewsManagementSystem.Models;
@@ -5,24 +7,19 @@ using FUNewsManagementSystem.Models.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Security.Claims;
 
 namespace FUNewsManagementSystem.Controllers;
 
-public class HomeController : Controller
+public class AuthenController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly ISystemAccountService _systemAccountService;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="logger"></param>
     /// <param name="systemAccountService"></param>
-    public HomeController(ILogger<HomeController> logger, ISystemAccountService systemAccountService)
+    public AuthenController(ISystemAccountService systemAccountService)
     {
-        _logger = logger;
         _systemAccountService = systemAccountService;
     }
 
@@ -36,6 +33,7 @@ public class HomeController : Controller
 
         return View(new LoginRequest());
     }
+    
     /// <summary>
     /// Login action (POST)
     /// </summary>
@@ -99,7 +97,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "NewArticle");
     }
 
     public IActionResult Privacy()

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FUNewsManagementSystem.Controllers;
+
 /// <summary>
 /// https://localhost:7047/Category
 /// </summary>
@@ -21,6 +22,7 @@ public class CategoryController : Controller
     {
         _categoryService = categoryService;
     }
+
     /// <summary>
     /// Get Category
     /// </summary>
@@ -28,8 +30,32 @@ public class CategoryController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View(_categoryService.GetBy(null, false, c => c.ParentCategory, c => c.InverseParentCategory));
+        var categories = _categoryService.GetBy(null, false, c => c.ParentCategory, c => c.InverseParentCategory)
+            .AsEnumerable() // Chuyển về IEnumerable để tránh lỗi
+            .Select(c => new CategoryModelViewModel
+            {
+                CategoryId = c.CategoryId,
+                CategoryName = c.CategoryName,
+                CategoryDescription = c.CategoryDesciption,
+                IsActive = c.IsActive,
+                ParentCategory = c.ParentCategory != null ? new CategoryModelViewModel
+                {
+                    CategoryId = c.ParentCategory.CategoryId,
+                    CategoryName = c.ParentCategory.CategoryName
+                } : null
+            }).ToList();
+
+        var viewModel = new CategoryViewModel
+        {
+            Categories = categories
+        };
+
+        return View(viewModel);
     }
+
+
+
+
     /// <summary>
     /// Add new category
     /// </summary>
@@ -57,6 +83,7 @@ public class CategoryController : Controller
         {
             parentCategoryId = modal.ParentCategoryId;
         }
+
         var childCategory = new Category
         {
             CategoryName = modal.CategoryName,
@@ -81,7 +108,60 @@ public class CategoryController : Controller
         }
 
         _categoryService.DeleteCategory(id);
+        TempData["Success"] = "Category deleted successfully!";
         return RedirectToAction(nameof(Index));
     }
 
+
+    /// <summary>
+    /// Update category
+    /// </summary>
+    /// <param name="modal"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public IActionResult UpdateCategory(UpdateCategoryViewModel modal)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage);
+            TempData["Error"] = string.Join("; ", errors);
+            return RedirectToAction("Index");
+        }
+        var category = _categoryService.GetById(modal.CategoryId);
+        if (category != null)
+        {
+            category.CategoryName = modal.CategoryName;
+            category.CategoryDesciption = modal.CategoryDescription;
+            category.ParentCategoryId = modal.ParentCategoryId;
+            category.IsActive = modal.IsActive;
+            _categoryService.UpdateCategory(category);
+            TempData["ToastMessage"] = "Update Category successfully!";
+            TempData["ToastType"] = "success";
+            return RedirectToAction("Index");
+        }
+
+        TempData["Error"] = "Invalid data!";
+        return RedirectToAction("Index");
+    }
+
+    /// <summary>
+    /// Delete category
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public IActionResult DeleteCategory(short id)
+    {
+        if (_categoryService.IsCategoryInUse(id))
+        {
+            TempData["Error"] = "Cannot delete category in use!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        _categoryService.DeleteCategory(id);
+        TempData["ToastMessage"] = "Delete Category successfully!";
+        TempData["ToastType"] = "success";
+        return RedirectToAction(nameof(Index));
+    }
 }

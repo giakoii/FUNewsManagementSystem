@@ -33,8 +33,28 @@ namespace BusinessObject.Service
         /// <param name="category"></param>
         public void UpdateCategory(Category category)
         {
+            if (category.CategoryId == category.ParentCategoryId)
+            {
+                throw new Exception("A category cannot be its own parent.");
+            }
+
+            // Nếu có danh mục cha, cập nhật danh mục cha trước
+            if (category.ParentCategoryId != null)
+            {
+                var parentCategory = Repository.GetById(category.ParentCategoryId ?? 0);
+                if (parentCategory == null)
+                {
+                    throw new Exception("Parent category does not exist.");
+                }
+
+                // Cập nhật danh mục cha trước
+                Repository.Update(parentCategory);
+            }
+
+            // Sau đó cập nhật danh mục hiện tại
             Repository.Update(category);
         }
+
         
         /// <summary>
         /// Delete category
@@ -44,14 +64,20 @@ namespace BusinessObject.Service
         public bool DeleteCategory(short id)
         {
             // Check if category is used in any article
-            var isUsed = GetBy(x => x.CategoryId == id);
-
-            if (isUsed.Any())
+            try
             {
-                return false;
+                var categorySelect = GetById(id);
+                if (categorySelect == null)
+                {
+                    return false;
+                }
+                return Repository.Delete(id);
             }
-
-            return Repository.Delete(id);
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -61,9 +87,8 @@ namespace BusinessObject.Service
         /// <returns></returns>
         public bool IsCategoryInUse(short categoryId)
         {
-            return GetBy(x => x.CategoryId == categoryId, 
-                false,
-                x => x.NewsArticles).Any();
+            return GetBy(x => x.CategoryId == categoryId && x.NewsArticles.Any(), 
+                false).Any();
         }
 
         /// <summary>

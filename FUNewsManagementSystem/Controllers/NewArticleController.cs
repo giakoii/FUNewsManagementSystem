@@ -27,6 +27,7 @@ namespace FUNewsManagementSystem.Controllers
             _tagService = tagService;
             _categoryService = categoryService;
         }
+        
         /// <summary>
         /// Get New Article
         /// </summary>
@@ -42,22 +43,22 @@ namespace FUNewsManagementSystem.Controllers
 
             IEnumerable<NewsArticle> articles = Enumerable.Empty<NewsArticle>();
 
-            if (User.IsInRole("Lecturer"))
+            if (!User.Identity.IsAuthenticated)
             {
                 articles = _articleService.GetBy(
-                x => (x.NewsStatus == true) && (x.NewsTitle.ToLower().Contains(searchTerm.ToLower())),
-                true,
-                a => a.Category,
-                t => t.Tags
+                    x => (x.NewsStatus == true) && (x.NewsTitle.ToLower().Contains(searchTerm.ToLower())),
+                    true,
+                    a => a.Category,
+                    t => t.Tags
                 );
             }
             else if (User.IsInRole("Staff"))
             {
                 articles = _articleService.GetBy(
-                x => x.NewsTitle.ToLower().Contains(searchTerm.ToLower()),
-                true,
-                a => a.Category,
-                t => t.Tags
+                    x => x.NewsTitle.ToLower().Contains(searchTerm.ToLower()),
+                    true,
+                    a => a.Category,
+                    t => t.Tags
                 );
             }
 
@@ -194,6 +195,7 @@ namespace FUNewsManagementSystem.Controllers
 
             return (maxId + 1).ToString();
         }
+        
         /// <summary>
         /// Get Search Term
         /// </summary>
@@ -202,6 +204,16 @@ namespace FUNewsManagementSystem.Controllers
         {
             var searchTerm = HttpContext.Request.Query["searchTerm"].ToString();
             return searchTerm;
+        }
+        
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+        
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }

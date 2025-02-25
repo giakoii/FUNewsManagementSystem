@@ -93,18 +93,6 @@ public class BaseRepository<Entity, Type> : IRepository<Entity, Type> where Enti
     {
         return await DbSet.FindAsync(id);
     }
-    
-    /// <summary>
-    /// Get entity by id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="members"></param>
-    /// <typeparam name="TResult"></typeparam>
-    /// <returns></returns>
-    public Task<TResult?> GetByIdAsync<TResult>(Type id, Expression<Func<Entity, TResult>> members)
-    {
-        return DbSet.Where(e => EF.Property<Type>(e, "Id").Equals(id)).Select(members).FirstOrDefaultAsync();
-    }
 
     /// <summary>
     /// Add entity

@@ -1,62 +1,500 @@
-﻿@model FUNewsManagementSystem.Models.ViewModel.LoginRequest
-
-@{
-    ViewData["Title"] = "Login";
-}
-
-<!-- Wrapper để căn giữa form -->
-<div class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="login-container p-4 bg-white rounded shadow w-75">
-        <h3 class="text-center mb-4">Login</h3>
-
-        @if (ViewData.ModelState.ErrorCount > 0)
-        {
-            <div class="alert alert-danger">
-                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    <div>@error.ErrorMessage</div>
-                }
-            </div>
-        }
-
-        <form asp-action="Login" method="post">
-            @Html.AntiForgeryToken()
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
-                <input asp-for="Email" class="form-control" placeholder="Enter email" autocomplete="off"/>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label">Password</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" id="password" autocomplete="off"/>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="showPassword" />
-                <label class="form-check-label" for="showPassword">Show Password</label>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">SIGN IN</button>
-        </form>
-    </div>
-</div>
-
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
-    <script>
-        // Toggle Show Password
-        $(document).ready(function () {
-            $('#showPassword').on('change', function () {
-                const passwordField = $('#password');
-                const type = $(this).is(':checked') ? 'text' : 'password';
-                passwordField.attr('type', type);
-            });
-        });
-    </script>
-}
+﻿@* @model IEnumerable<DataAccessObject.Models.NewsArticle> *@
+@* *@
+@* @{ *@
+@*     ViewData["Title"] = "Danh sách Bài Viết (Card Layout)"; *@
+@*     var searchTermValue = ViewBag.SearchTerm as string ?? ""; *@
+@* } *@
+@* *@
+@* <h1>@ViewData["Title"]</h1> *@
+@* *@
+@* <!-- Form Search (nếu có) --> *@
+@* <form method="get" asp-controller="Home" asp-action="Index" class="mb-3"> *@
+@*     <div class="input-group"> *@
+@*         <span class="input-group-text"> *@
+@*             <i class="bi bi-search"></i> *@
+@*         </span> *@
+@*         <input type="text" *@
+@*                name="searchTerm" *@
+@*                class="form-control" *@
+@*                placeholder="Search..." *@
+@*                value="@searchTermValue" /> *@
+@*         <button type="submit" class="btn btn-primary">Search</button> *@
+@*     </div> *@
+@* </form> *@
+@* <form method="get" asp-controller="Home" asp-action="Index" class="mb-3 d-flex"> *@
+@* *@
+@*     <!-- Sort By --> *@
+@*     <select name="sortBy" class="form-select me-2"> *@
+@*         <option value="Title" selected="@(ViewBag.SortBy == "Title" ? "selected" : null)">Title</option> *@
+@*         <option value="Id" selected="@(ViewBag.SortBy == "Id" ? "selected" : null)">ID</option> *@
+@*         <option value="Date" selected="@(ViewBag.SortBy == "Date" ? "selected" : null)">Date</option> *@
+@*     </select> *@
+@* *@
+@*     <select name="sortOrder" class="form-select me-2"> *@
+@*         <option value="asc" selected="@(ViewBag.SortOrder == "asc" ? "selected" : null)">Ascending</option> *@
+@*         <option value="desc" selected="@(ViewBag.SortOrder == "desc" ? "selected" : null)">Descending</option> *@
+@*     </select> *@
+@* *@
+@* *@
+@*     <button type="submit" class="btn btn-primary">Sort</button> *@
+@* </form> *@
+@* <div aria-live="polite" aria-atomic="true" class="position-relative"> *@
+@*     <div class="toast-container position-fixed top-0 end-0 p-3"> *@
+@*         @if (TempData["ToastMessage"] != null) *@
+@*         { *@
+@*             var toastType = TempData["ToastType"]?.ToString() ?? "info"; *@
+@*             <div class="toast align-items-center text-bg-@toastType border-0 show" role="alert" aria-live="assertive" aria-atomic="true"> *@
+@*                 <div class="d-flex"> *@
+@*                     <div class="toast-body"> *@
+@*                         @TempData["ToastMessage"] *@
+@*                     </div> *@
+@*                     <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button> *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* </div> *@
+@* <!-- Nút Add New Article --> *@
+@* <!-- Nút Manage (chỉ Staff mới thấy) --> *@
+@* @if (User.IsInRole("Staff")) *@
+@* { *@
+@*     <div class="mb-3"> *@
+@*         <!-- Switch Manage Mode --> *@
+@*         <input type="checkbox" *@
+@*                id="switchManage" *@
+@*                data-toggle="switchbutton" *@
+@*                checked *@
+@*                data-width="100" *@
+@*                data-onlabel="Manage" *@
+@*                data-offlabel="View" *@
+@*                data-offstyle="info" /> *@
+@*     </div> *@
+@*     <button id="btnAddArticle" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal"> *@
+@*         Add New Article *@
+@*     </button> *@
+@*     <a asp-controller="Category" asp-action="Index" class="btn btn-secondary"> *@
+@*         Manage Categories *@
+@*     </a> *@
+@* } *@
+@* <!-- ========== CARD LAYOUT ========== --> *@
+@* <!-- Đặt trong div #cardLayout, hiển thị mặc định --> *@
+@* <div id="cardLayout"> *@
+@*     <div class="row"> *@
+@*         <div class="col-md-5"> *@
+@*             @foreach (var article in Model) *@
+@*             { *@
+@*                 <div class="card mb-3 article-card" *@
+@*                      style="cursor: pointer;" *@
+@*                      data-id="@article.NewsArticleId" *@
+@*                      data-title="@article.NewsTitle" *@
+@*                      data-category="@article.Category.CategoryName" *@
+@*                      data-content="@article.NewsContent" *@
+@*                      data-tags="@string.Join(";", article.Tags.Select(t => t.TagName))"> *@
+@* *@
+@*                     <div class="card-body"> *@
+@*                         <h5 class="card-title">@article.NewsTitle</h5> *@
+@*                         <p class="card-text"> *@
+@*                             <strong>Category:</strong> @article.Category.CategoryName *@
+@*                         </p> *@
+@*                         <p class="card-text"> *@
+@*                             <small class="text-muted">Article ID: @article.NewsArticleId</small> *@
+@*                         </p> *@
+@*                         <p class="card-text"> *@
+@*                             <strong>Status:</strong> *@
+@*                             @if (article.NewsStatus ?? false) *@
+@*                             { *@
+@*                                 <span class="badge bg-success">Open</span> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 <span class="badge bg-danger">Close</span> *@
+@*                             } *@
+@*                         </p> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             } *@
+@*         </div> *@
+@* *@
+@*         <div class="col-md-7"> *@
+@*             <div id="articleDetail" class="border p-3"> *@
+@*                 <h4 id="detailTitle" class="mb-3">[Chưa chọn bài viết]</h4> *@
+@*                 <p> *@
+@*                     <strong>Category:</strong> *@
+@*                     <span id="detailCategory"></span> *@
+@*                 </p> *@
+@*                 <p> *@
+@*                     <strong>Content:</strong> *@
+@*                     <span id="detailContent"></span> *@
+@*                 </p> *@
+@*                 <p> *@
+@*                     <strong>Tags:</strong> *@
+@*                     <span id="detailTags"></span> *@
+@*                 </p> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <!-- ========== TABLE LAYOUT ========== --> *@
+@* <!-- Đặt trong div #tableLayout, ban đầu ẩn --> *@
+@* @if (User.IsInRole("Staff")) *@
+@* { *@
+@*     <div id="tableLayout" style="display: none;"> *@
+@*         <table class="table table-bordered"> *@
+@*             <thead> *@
+@*             <tr> *@
+@*                 <th>Mã</th> *@
+@*                 <th>Tiêu đề</th> *@
+@*                 <th>Nội dung</th> *@
+@*                 <th>Category Name</th> *@
+@*                 <th>Tag Name</th> *@
+@*                 <th>Ngày đăng</th> *@
+@*                 <th>Status</th> *@
+@*                 <th>Action</th> *@
+@*             </tr> *@
+@*             </thead> *@
+@*             <tbody> *@
+@*             @foreach (var article in Model) *@
+@*             { *@
+@*                 <tr> *@
+@*                     <td>@article.NewsArticleId</td> *@
+@*                     <td>@article.NewsTitle</td> *@
+@*                     <td>@article.NewsContent</td> *@
+@*                     <td>@article.Category.CategoryName</td> *@
+@*                     <td>@string.Join(", ", article.Tags.Select(tag => tag.TagName))</td> *@
+@*                     <td> *@
+@*                         @( *@
+@*                         article.CreatedDate.HasValue *@
+@*                             ? article.CreatedDate.Value.ToString("dd/MM/yyyy") *@
+@*                             : "" *@
+@*                         ) *@
+@*                     </td> *@
+@*                     <td> *@
+@*                         @if (article.NewsStatus ?? false) *@
+@*                         { *@
+@*                             <span class="badge bg-success">Open</span> *@
+@*                         } *@
+@*                         else *@
+@*                         { *@
+@*                             <span class="badge bg-danger">Close</span> *@
+@*                         } *@
+@*                     </td> *@
+@*                     <td> *@
+@*                         <button class="btn btn-warning btn-sm edit-article-btn" *@
+@*                                 data-bs-toggle="modal" *@
+@*                                 data-bs-target="#updateArticleModal" *@
+@*                                 data-id="@article.NewsArticleId" *@
+@*                                 data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))" *@
+@*                                 data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))" *@
+@*                                 data-category="@article.Category.CategoryId" *@
+@*                                 data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))" *@
+@*                                 data-status="@article.NewsStatus"> *@
+@*                             Edit *@
+@*                         </button> *@
+@*                         <button class="btn btn-danger btn-sm delete-article-btn" *@
+@*                                 data-id="@article.NewsArticleId" *@
+@*                                 data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))" *@
+@*                                 data-bs-toggle="modal" *@
+@*                                 data-bs-target="#deleteArticleModal"> *@
+@*                             Delete *@
+@*                         </button> *@
+@* *@
+@*                     </td> *@
+@*                 </tr> *@
+@*             } *@
+@*             </tbody> *@
+@*         </table> *@
+@*     </div> *@
+@* } *@
+@* *@
+@* <!-- Modal Add Article --> *@
+@* <div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true"> *@
+@*     <div class="modal-dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <form id="addArticleForm" method="post" asp-action="AddArticle"> *@
+@*                 <div class="modal-header"> *@
+@*                     <h5 class="modal-title" id="addArticleModalLabel">Add New Article</h5> *@
+@*                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*                 </div> *@
+@*                 <div class="modal-body"> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="newsTitle" class="form-label">Title</label> *@
+@*                         <input type="text" class="form-control" id="newsTitle" name="NewsTitle" required /> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="headLine" class="form-label">Headline</label> *@
+@*                         <input type="text" class="form-control" id="headLine" name="HeadLine" /> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="newSource" class="form-label">News Source</label> *@
+@*                         <input type="text" class="form-control" id="newSource" name="NewSource" /> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="newsContent" class="form-label">Content</label> *@
+@*                         <textarea class="form-control" id="newsContent" name="NewsContent" required></textarea> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="category" class="form-label">Category</label> *@
+@*                         <select class="form-control" id="category" name="SelectedCategory" required> *@
+@*                             <option value="">-- Select Category --</option> *@
+@*                             @foreach (var category in (IEnumerable<DataAccessObject.Models.Category>)ViewBag.Categories) *@
+@*                             { *@
+@*                                 <option value="@category.CategoryId">@category.CategoryName</option> *@
+@*                             } *@
+@*                         </select> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label class="form-label">Tags</label> *@
+@*                         <div> *@
+@*                             @foreach (var tag in (IEnumerable<DataAccessObject.Models.Tag>)ViewBag.Tags) *@
+@*                             { *@
+@*                                 <div class="form-check form-check-inline"> *@
+@*                                     <input class="form-check-input" *@
+@*                                            type="checkbox" *@
+@*                                            id="tag_@tag.TagId" *@
+@*                                            name="SelectedTags" *@
+@*                                            value="@tag.TagId" /> *@
+@*                                     <label class="form-check-label" for="tag_@tag.TagId">@tag.TagName</label> *@
+@*                                 </div> *@
+@*                             } *@
+@*                         </div> *@
+@*                     </div> *@
+@* *@
+@*                 </div> *@
+@* *@
+@*                 <div class="modal-footer"> *@
+@*                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> *@
+@*                     <button type="submit" class="btn btn-primary">Save</button> *@
+@*                 </div> *@
+@*             </form> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <!-- Modal Update Article --> *@
+@* <div class="modal fade" id="updateArticleModal" tabindex="-1" aria-labelledby="updateArticleModalLabel" aria-hidden="true"> *@
+@*     <div class="modal-dialog modal-xl modal-dialog-centered"> *@
+@*         <div class="modal-content"> *@
+@*             <form id="updateArticleForm" method="post" asp-action="UpdateArticle"> *@
+@*                 <div class="modal-header"> *@
+@*                     <h5 class="modal-title" id="updateArticleModalLabel">Update Article</h5> *@
+@*                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*                 </div> *@
+@*                 <div class="modal-body"> *@
+@* *@
+@*                     <!-- Hidden field for Article ID --> *@
+@*                     <input type="hidden" id="updateNewsId" name="NewsArticleId" /> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="updateNewsTitle" class="form-label">Title</label> *@
+@*                         <input type="text" id="updateNewsTitle" name="NewsTitle" class="form-control" required /> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="updateNewsStatus" class="form-label">Status</label> *@
+@*                         <select class="form-select w-25" id="updateNewsStatus" name="NewsStatus" required> *@
+@*                             <option value="true">Open</option> *@
+@*                             <option value="false">Close</option> *@
+@*                         </select> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="updateNewsContent" class="form-label">Content</label> *@
+@*                         <textarea class="form-control" id="updateNewsContent" name="NewsContent" required></textarea> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="updateCategory" class="form-label">Category</label> *@
+@*                         <select class="form-control" id="updateCategory" name="SelectedCategory" required> *@
+@*                             <option value="">-- Select Category --</option> *@
+@*                             @foreach (var category in (IEnumerable<DataAccessObject.Models.Category>)ViewBag.Categories) *@
+@*                             { *@
+@*                                 <option value="@category.CategoryId">@category.CategoryName</option> *@
+@*                             } *@
+@*                         </select> *@
+@*                     </div> *@
+@* *@
+@*                     <div class="mb-3"> *@
+@*                         <label class="form-label">Tags</label> *@
+@*                         <div> *@
+@*                             @foreach (var tag in (IEnumerable<DataAccessObject.Models.Tag>)ViewBag.Tags) *@
+@*                             { *@
+@*                                 <div class="form-check form-check-inline"> *@
+@*                                     <input class="form-check-input" *@
+@*                                            type="checkbox" *@
+@*                                            id="tag_@tag.TagId" *@
+@*                                            name="SelectedTags" *@
+@*                                            value="@tag.TagId" /> *@
+@*                                     <label class="form-check-label" for="tag_@tag.TagId">@tag.TagName</label> *@
+@*                                 </div> *@
+@*                             } *@
+@*                         </div> *@
+@*                     </div> *@
+@* *@
+@*                 </div> *@
+@*                 <div class="modal-footer"> *@
+@*                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> *@
+@*                     <button type="submit" class="btn btn-primary">Save Changes</button> *@
+@*                 </div> *@
+@*             </form> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <!-- Modal Delete Article --> *@
+@* <div class="modal fade" id="deleteArticleModal" tabindex="-1" aria-labelledby="deleteArticleModalLabel" aria-hidden="true"> *@
+@*     <div class="modal-dialog modal-dialog-centered"> *@
+@*         <div class="modal-content"> *@
+@*             <form id="deleteArticleForm" asp-controller="NewArticle" method="post" asp-action="DeleteArticle"> *@
+@*                 <div class="modal-header"> *@
+@*                     <h5 class="modal-title" id="deleteArticleModalLabel">Delete Article</h5> *@
+@*                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*                 </div> *@
+@*                 <div class="modal-body"> *@
+@*                     <input type="hidden" id="deleteArticleId" name="NewsArticleId" /> *@
+@* *@
+@*                     <p>Are you sure you want to delete the article:</p> *@
+@*                     <h5 id="deleteArticleTitle" class="text-danger"></h5> *@
+@* *@
+@*                     <p class="text-muted">This action cannot be undone.</p> *@
+@*                 </div> *@
+@*                 <div class="modal-footer"> *@
+@*                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> *@
+@*                     <button type="submit" class="btn btn-danger">Delete</button> *@
+@*                 </div> *@
+@*             </form> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* *@
+@* @section Scripts { *@
+@*     <script> *@
+@*         $(document).ready(function () { *@
+@*             let isTableStorage = localStorage.getItem("isTable"); *@
+@*             let isTable = false; *@
+@* *@
+@*             if (isTableStorage === "true") { *@
+@*                 isTable = true; *@
+@*                 $('#tableLayout').show(); *@
+@*                 var switchManage = document.getElementById('switchManage'); *@
+@*                 if (switchManage) { *@
+@*                     switchManage.switchButton('off', true); *@
+@*                 } *@
+@*                 $('#btnAddArticle').show(); *@
+@*                 $('#cardLayout').hide(); *@
+@*                 $('#btnManage').text('Back to Card'); *@
+@*             } else { *@
+@*                 // Mặc định card layout *@
+@*                 isTable = false; *@
+@*                 $('#cardLayout').show(); *@
+@*                 var switchManage = document.getElementById('switchManage'); *@
+@*                 if (switchManage) { *@
+@*                     switchManage.switchButton('on', true); *@
+@*                 } *@
+@*                 $('#btnAddArticle').hide(); *@
+@*                 $('#tableLayout').hide(); *@
+@*                 $('#btnManage').text('Move To Manage Article'); *@
+@*             } *@
+@* *@
+@*             $('.article-card').on('click', function () { *@
+@*                 $('.article-card').removeClass('border border-primary'); *@
+@*                 $(this).addClass('border border-primary'); *@
+@*                 var title = $(this).data('title'); *@
+@*                 var category = $(this).data('category'); *@
+@*                 var content = $(this).data('content'); *@
+@*                 var tags = $(this).data('tags'); *@
+@* *@
+@*                 $('#detailTitle').text(title); *@
+@*                 $('#detailCategory').text(category); *@
+@*                 $('#detailContent').text(content); *@
+@* *@
+@*                 $('#detailTags').empty(); *@
+@*                 if (tags && tags.length > 0) { *@
+@*                     var tagArray = tags.split(';'); *@
+@*                     tagArray.forEach(function (tag) { *@
+@*                         var trimmedTag = tag.trim(); *@
+@*                         if (trimmedTag) { *@
+@*                             var badge = $('<span class="badge bg-info me-1"></span>').text(trimmedTag); *@
+@*                             $('#detailTags').append(badge); *@
+@*                         } *@
+@*                     }); *@
+@*                 } *@
+@*             }); *@
+@* *@
+@*             $('#switchManage').on('change', function () { *@
+@*                 isTable = !isTable; *@
+@*                 // Lưu vào localStorage *@
+@*                 localStorage.setItem("isTable", isTable.toString()); *@
+@* *@
+@*                 if (isTable) { *@
+@*                     $('#tableLayout').show(); *@
+@*                     $('#btnAddArticle').show(); *@
+@*                     document.getElementById('switchManage').switchButton('off', true) *@
+@*                     $('#cardLayout').hide(); *@
+@*                     $(this).text('Back to Card');à *@
+@*                 } else { *@
+@*                     $('#cardLayout').show(); *@
+@*                     $('#btnAddArticle').hide(); *@
+@*                     document.getElementById('switchManage').switchButton('on', true) *@
+@*                     $('#tableLayout').hide(); *@
+@*                     $(this).text('Move To Manage Article'); *@
+@*                 } *@
+@*             }); *@
+@*             $('.edit-article-btn').on('click', function () { *@
+@* *@
+@*                 // Lấy dữ liệu từ các data-* attribute *@
+@*                 var id = $(this).data('id'); *@
+@*                 var title = $(this).data('title'); *@
+@*                 var content = $(this).data('content'); *@
+@*                 var category = $(this).data('category'); *@
+@*                 var tags = $(this).data('tags'); *@
+@*                 var status = $(this).data('status'); *@
+@*                 // Điền dữ liệu vào Modal Update *@
+@*                 $('#updateArticleModal #updateNewsId').val(id); *@
+@*                 $('#updateArticleModal #updateNewsTitle').val(title); *@
+@*                 $('#updateArticleModal #updateNewsContent').val(content); *@
+@*                 $('#updateArticleModal #updateCategory').val(category); *@
+@*                 $('#updateArticleModal #updateNewsStatus').val((status && status.toString().toLowerCase() === "true") ? "true" : "false"); *@
+@*                 // Reset tất cả các checkbox tag *@
+@*                 $('#updateArticleModal input[name="SelectedTags"]').prop('checked', false); *@
+@* *@
+@*                 // Đánh dấu các tag đã chọn *@
+@*                 if (tags) { *@
+@*                     var tagArray = tags.split(','); *@
+@*                     tagArray.forEach(function (tagId) { *@
+@*                         $('#updateArticleModal #tag_' + tagId.trim()).prop('checked', true); *@
+@*                     }); *@
+@*                 } *@
+@*             }); *@
+@*             $('.delete-article-btn').on('click', function () { *@
+@*                 var id = $(this).data('id'); *@
+@*                 var title = $(this).data('title'); *@
+@* *@
+@*                 // Gán giá trị vào modal *@
+@*                 $('#deleteArticleModal #deleteArticleId').val(id); *@
+@*                 $('#deleteArticleModal #deleteArticleTitle').text(title); *@
+@*             }); *@
+@*         }); *@
+@* *@
+@*         document.addEventListener('DOMContentLoaded', function () { *@
+@*             var toastElList = [].slice.call(document.querySelectorAll('.toast')) *@
+@*             var toastList = toastElList.map(function (toastEl) { *@
+@*                 return new bootstrap.Toast(toastEl, { delay: 1500 }); *@
+@*             }); *@
+@* *@
+@*             toastList.forEach(toast => toast.show()); *@
+@*         }); *@
+@*     </script> *@
+@*     <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css" rel="stylesheet"> *@
+@*     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script> *@
+@*     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> *@
+@*     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> *@
+@* *@
+@* } *@
+@* *@

@@ -13,8 +13,6 @@ public interface IRepository<T, U> where T : class
 
     public T GetById(U id);
     
-    public Task<TResult?> GetByIdAsync<TResult>(U id, Expression<Func<T, TResult>> members);
-
     public Task<T> GetByIdAsync(U id);
 
     public bool Add(T entity);
