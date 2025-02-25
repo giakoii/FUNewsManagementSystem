@@ -99,8 +99,6 @@
                         <p class="card-text">
                             <small class="text-muted">Article ID: @article.NewsArticleId</small>
                         </p>
-                        @if (User.IsInRole("Staff"))
-                        {
                             <p class="card-text">
                                 <strong>Status:</strong>
                                 @if (article.NewsStatus ?? false)
@@ -112,7 +110,6 @@
                                     <span class="badge bg-danger">Close</span>
                                 }
                             </p>
-                        }
                     </div>
                 </div>
             }
@@ -385,7 +382,10 @@
             if (isTableStorage === "true") {
                 isTable = true;
                 $('#tableLayout').show();
-                document.getElementById('switchManage').switchButton('off', true)
+                var switchManage = document.getElementById('switchManage');
+                if (switchManage) {
+                    switchManage.switchButton('off', true);
+                }
                 $('#btnAddArticle').show();
                 $('#cardLayout').hide();
                 $('#btnManage').text('Back to Card');
@@ -393,7 +393,10 @@
                 // Mặc định card layout
                 isTable = false;
                 $('#cardLayout').show();
-                document.getElementById('switchManage').switchButton('on', true)
+                var switchManage = document.getElementById('switchManage');
+                if (switchManage) {
+                    switchManage.switchButton('on', true);
+                }
                 $('#btnAddArticle').hide();
                 $('#tableLayout').hide();
                 $('#btnManage').text('Move To Manage Article');

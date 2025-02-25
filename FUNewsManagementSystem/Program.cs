@@ -24,7 +24,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
      .AddCookie(options =>
      {
-         options.LoginPath = "/Home/Index";
+         options.LoginPath = "/NewArticle/Index";
          options.ExpireTimeSpan = TimeSpan.FromDays(7);
          options.SlidingExpiration = true;
          options.Cookie.IsEssential = true;
@@ -40,7 +40,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/NewArticle/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -54,5 +54,5 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Authen}/{action=Index}/{id?}");
 app.Run();

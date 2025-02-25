@@ -82,7 +82,7 @@ namespace FUNewsManagementSystem.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            return RedirectToAction("Error", "Home");
+            return RedirectToAction("Error", "NewArticle");
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace FUNewsManagementSystem.Controllers
                 if (User.Identity != null && User.Identity.Name == userDelete.AccountName)
                 {
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "NewArticle");
                 }
             }
 
