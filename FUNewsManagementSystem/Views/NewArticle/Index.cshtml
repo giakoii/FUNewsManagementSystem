@@ -21,7 +21,23 @@
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
+<form method="get" asp-controller="NewArticle" asp-action="Index" class="mb-3 d-flex">
 
+    <!-- Sort By -->
+    <select name="sortBy" class="form-select me-2">
+        <option value="Title" selected="@(ViewBag.SortBy == "Title" ? "selected" : null)">Title</option>
+        <option value="Id" selected="@(ViewBag.SortBy == "Id" ? "selected" : null)">ID</option>
+        <option value="Date" selected="@(ViewBag.SortBy == "Date" ? "selected" : null)">Date</option>
+    </select>
+
+    <select name="sortOrder" class="form-select me-2">
+        <option value="asc" selected="@(ViewBag.SortOrder == "asc" ? "selected" : null)">Ascending</option>
+        <option value="desc" selected="@(ViewBag.SortOrder == "desc" ? "selected" : null)">Descending</option>
+    </select>
+
+
+    <button type="submit" class="btn btn-primary">Sort</button>
+</form>
 <div aria-live="polite" aria-atomic="true" class="position-relative">
     <div class="toast-container position-fixed top-0 end-0 p-3">
         @if (TempData["ToastMessage"] != null)
@@ -53,10 +69,10 @@
                data-offlabel="View"
                data-offstyle="info" />
     </div>
+    <button id="btnAddArticle" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">
+        Add New Article
+    </button>
 }
-<button id="btnAddArticle" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">
-    Add New Article
-</button>
 <!-- ========== CARD LAYOUT ========== -->
 <!-- Đặt trong div #cardLayout, hiển thị mặc định -->
 <div id="cardLayout">
@@ -107,78 +123,63 @@
 
 <!-- ========== TABLE LAYOUT ========== -->
 <!-- Đặt trong div #tableLayout, ban đầu ẩn -->
-<form method="get" asp-controller="NewArticle" asp-action="Index" class="mb-3 d-flex">
-
-    <!-- Sort By -->
-    <select name="sortBy" class="form-select me-2">
-        <option value="Title" selected="@(ViewBag.SortBy == "Title" ? "selected" : null)">Title</option>
-        <option value="Id" selected="@(ViewBag.SortBy == "Id" ? "selected" : null)">ID</option>
-        <option value="Date" selected="@(ViewBag.SortBy == "Date" ? "selected" : null)">Date</option>
-    </select>
-
-    <select name="sortOrder" class="form-select me-2">
-        <option value="asc" selected="@(ViewBag.SortOrder == "asc" ? "selected" : null)">Ascending</option>
-        <option value="desc" selected="@(ViewBag.SortOrder == "desc" ? "selected" : null)">Descending</option>
-    </select>
-
-
-    <button type="submit" class="btn btn-primary">Sort</button>
-</form>
-
-<div id="tableLayout" style="display: none;">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Mã</th>
-                <th>Tiêu đề</th>
-                <th>Nội dung</th>
-                <th>Category Name</th>
-                <th>Tag Name</th>
-                <th>Ngày đăng</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var article in Model)
-            {
+@if (User.IsInRole("Staff"))
+{
+    <div id="tableLayout" style="display: none;">
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td>@article.NewsArticleId</td>
-                    <td>@article.NewsTitle</td>
-                    <td>@article.NewsContent</td>
-                    <td>@article.Category.CategoryName</td>
-                    <td>@string.Join(", ", article.Tags.Select(tag => tag.TagName))</td>
-                    <td>
-                        @(
-                            article.CreatedDate.HasValue
-                            ? article.CreatedDate.Value.ToString("dd/MM/yyyy")
-                            : ""
-                            )
-                    </td>
-                    <td>
-                        <button class="btn btn-warning btn-sm edit-article-btn"
-                                data-bs-toggle="modal"
-                                data-bs-target="#updateArticleModal"
-                                data-id="@article.NewsArticleId"
-                                data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
-                                data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))"
-                                data-category="@article.Category.CategoryId"
-                                data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))">
-                            Edit
-                        </button>
-                        <button class="btn btn-danger btn-sm delete-article-btn"
-                                data-id="@article.NewsArticleId"
-                                data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteArticleModal">
-                            Delete
-                        </button>
-
-                    </td>
+                    <th>Mã</th>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                    <th>Category Name</th>
+                    <th>Tag Name</th>
+                    <th>Ngày đăng</th>
+                    <th>Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var article in Model)
+                {
+                    <tr>
+                        <td>@article.NewsArticleId</td>
+                        <td>@article.NewsTitle</td>
+                        <td>@article.NewsContent</td>
+                        <td>@article.Category.CategoryName</td>
+                        <td>@string.Join(", ", article.Tags.Select(tag => tag.TagName))</td>
+                        <td>
+                            @(
+                                article.CreatedDate.HasValue
+                                ? article.CreatedDate.Value.ToString("dd/MM/yyyy")
+                                : ""
+                                )
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm edit-article-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#updateArticleModal"
+                                    data-id="@article.NewsArticleId"
+                                    data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
+                                    data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))"
+                                    data-category="@article.Category.CategoryId"
+                                    data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))">
+                                Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-article-btn"
+                                    data-id="@article.NewsArticleId"
+                                    data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteArticleModal">
+                                Delete
+                            </button>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
 
 <!-- Modal Add Article -->
 <div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
