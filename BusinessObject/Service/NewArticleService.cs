@@ -70,6 +70,7 @@ namespace BusinessObject.Service
             {
                 existingArticle.NewsTitle = newsArticle.NewsTitle;
                 existingArticle.Headline = newsArticle.Headline;
+                existingArticle.NewsStatus = newsArticle.NewsStatus;
                 existingArticle.NewsContent = newsArticle.NewsContent;
                 existingArticle.NewsSource = newsArticle.NewsSource;
                 existingArticle.CategoryId = newsArticle.CategoryId;
