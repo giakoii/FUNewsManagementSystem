@@ -13,5 +13,12 @@ namespace DataAccessObject.Repositories
         public NewArticleRepository(FUNewsManagementSystemContext context) : base(context)
         {
         }
+
+        public IQueryable<NewsArticle> GetNewsByDateRange(DateTime startDate, DateTime endDate)
+        {
+            return _context.NewsArticles.Where(article => article.CreatedDate >= startDate && article.CreatedDate <= endDate)
+                .OrderByDescending(article => article.CreatedDate);
+
+        }
     }
 }

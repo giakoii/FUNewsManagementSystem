@@ -63,7 +63,8 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
 
     public Task<List<SystemAccount>> GetSystemAccountsAsync()
     {
-        throw new NotImplementedException();
+        var accounts = Repository.GetByAsync().Result.ToList();
+        return Task.FromResult(accounts);
     }
 
     /// <summary>

@@ -14,6 +14,7 @@ namespace FUNewsManagementSystem.Controllers
         private readonly INewArticleService _articleService;
         private readonly ITagService _tagService;
         private readonly ICategoryService _categoryService;
+        
         /// <summary>
         /// Constructor
         /// </summary>
@@ -43,7 +44,7 @@ namespace FUNewsManagementSystem.Controllers
 
             IEnumerable<NewsArticle> articles = Enumerable.Empty<NewsArticle>();
 
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity.IsAuthenticated || User.IsInRole("Lecturer"))
             {
                 articles = _articleService.GetBy(
                     x => (x.NewsStatus == true) && (x.NewsTitle.ToLower().Contains(searchTerm.ToLower())),
@@ -61,6 +62,7 @@ namespace FUNewsManagementSystem.Controllers
                     t => t.Tags
                 );
             }
+            
 
             articles = sortBy switch
             {

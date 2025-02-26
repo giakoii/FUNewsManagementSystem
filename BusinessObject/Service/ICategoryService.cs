@@ -4,6 +4,7 @@ namespace BusinessObject.Service
 {
     public interface ICategoryService : IBaseService<Category, short>
     {
+        List<Category> GetBy();
         bool AddCategory(Category category);
         
         void UpdateCategory(Category category);

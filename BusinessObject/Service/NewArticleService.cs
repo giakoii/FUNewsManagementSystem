@@ -9,15 +9,17 @@ namespace BusinessObject.Service
     public class NewArticleService : BaseService<NewsArticle, string>, INewArticleService
     {
         private readonly ITagService _tagService;
+        private readonly INewArticelRepository _newsArticleRepository;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="tagService"></param>
-        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService) : base(repository)
+        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService, INewArticelRepository newArticelRepository) : base(repository)
         {
             _tagService = tagService;
+            _newsArticleRepository = newArticelRepository;
         }
 
         /// <summary>
@@ -82,6 +84,12 @@ namespace BusinessObject.Service
                 }
                 Repository.Update(existingArticle);
             }
+        }
+
+        public List<NewsArticle> GetNewsReportByDateRange(DateTime startDate, DateTime endDate)
+        {
+            return _newsArticleRepository.GetNewsByDateRange(startDate, endDate).ToList();
+
         }
     }
 }

@@ -10,12 +10,14 @@ namespace FUNewsManagementSystem.Controllers
     public class AdminController : Controller
     {
         private readonly ISystemAccountService _systemAccountService;
+        private readonly INewArticleService _newsService;
 
-        public AdminController(ISystemAccountService systemAccountService)
+        public AdminController(ISystemAccountService systemAccountService, INewArticleService newArticleService)
         {
             _systemAccountService = systemAccountService;
+            _newsService = newArticleService;
         }
-
+        
         public IActionResult Dashboard()
         {
             return View();
@@ -58,6 +60,13 @@ namespace FUNewsManagementSystem.Controllers
 
             await _systemAccountService.UpdateSystemAccountAsync(account);
             return Ok("User updated successfully.");
+        }
+        
+        [HttpGet]
+        public IActionResult GetNewsByDateRange(DateTime startDate, DateTime endDate)
+        {
+            var news = _newsService.GetNewsReportByDateRange(startDate, endDate);
+            return Ok(news);
         }
     }
 }

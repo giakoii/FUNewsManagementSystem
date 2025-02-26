@@ -9,5 +9,6 @@ namespace BusinessObject.Service
         bool DeleteNewsArticle(string id);
 
         void UpdateNewsArticle(NewsArticle newsArticle);
+        List<NewsArticle> GetNewsReportByDateRange(DateTime startDate, DateTime endDate);
     }
 }

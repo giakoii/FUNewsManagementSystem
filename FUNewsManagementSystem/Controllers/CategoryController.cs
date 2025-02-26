@@ -30,8 +30,8 @@ public class CategoryController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        var categories = _categoryService.GetBy(null, false, c => c.ParentCategory, c => c.InverseParentCategory)
-            .AsEnumerable() // Chuyển về IEnumerable để tránh lỗi
+        var categories = _categoryService.GetBy()
+            .AsEnumerable()
             .Select(c => new CategoryModelViewModel
             {
                 CategoryId = c.CategoryId,
@@ -133,8 +133,6 @@ public class CategoryController : Controller
         {
             category.CategoryName = modal.CategoryName;
             category.CategoryDesciption = modal.CategoryDescription;
-            category.ParentCategoryId = modal.ParentCategoryId;
-            category.IsActive = modal.IsActive;
             _categoryService.UpdateCategory(category);
             TempData["ToastMessage"] = "Update Category successfully!";
             TempData["ToastType"] = "success";

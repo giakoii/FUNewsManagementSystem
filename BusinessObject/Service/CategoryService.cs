@@ -17,6 +17,11 @@ namespace BusinessObject.Service
             _newArticleService = newArticleService;
         }
 
+        public List<Category> GetBy()
+        {
+            return GetBy(x => x.IsActive == true, false, c => c.ParentCategory, c => c.InverseParentCategory).ToList();
+        }
+
         /// <summary>
         /// Add new category
         /// </summary>

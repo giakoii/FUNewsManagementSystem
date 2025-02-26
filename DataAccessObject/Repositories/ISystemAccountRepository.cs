@@ -9,5 +9,5 @@ public interface ISystemAccountRepository : IRepository<SystemAccount, short>
     List<ViewUserNewsHistory> GetNewsHistory(short id);
 
     public bool DeleteAccount(short id);
-
+    
 }

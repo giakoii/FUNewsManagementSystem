@@ -32,6 +32,12 @@
                                 <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">User Profile</a>
                             </li>
                         }
+                        @if (User.IsInRole(EnumRole.Admin.ToString()))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="Dashboard">DashBoard</a>
+                            </li>
+                        }
                         <li class="nav-item ms-auto">
                             @if (User.Identity.IsAuthenticated)
                             {

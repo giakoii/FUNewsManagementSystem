@@ -180,22 +180,22 @@
                         <textarea class="form-control" id="updateCategoryDescription" name="CategoryDescription" asp-for="UpdateCategory.CategoryDescription" rows="3"></textarea>
                     </div>
 
-                    <div class="form-check form-switch mb-3">
-                        <input type="hidden" name="updateIsActive" asp-for="UpdateCategory.IsActive">
-                        <input class="form-check-input" type="checkbox" id="updateIsActive" asp-for="UpdateCategory.IsActive">
-                        <label class="form-check-label" for="updateIsActive">Active</label>
-                    </div>
+                    @* <div class="form-check form-switch mb-3"> *@
+                    @*     <input type="hidden" name="updateIsActive" asp-for="UpdateCategory.IsActive"> *@
+                    @*     <input class="form-check-input" type="checkbox" id="updateIsActive" asp-for="UpdateCategory.IsActive"> *@
+                    @*     <label class="form-check-label" for="updateIsActive">Active</label> *@
+                    @* </div> *@
 
-                    <div class="mb-3">
-                        <label for="updateParentCategoryId" class="form-label">Parent Category</label>
-                        <select class="form-select" id="updateParentCategoryId" asp-for="UpdateCategory.ParentCategoryId">
-                            <option value="">None</option>
-                            @foreach (var category in Model.Categories.Where(c => c.ParentCategory?.CategoryId == c.CategoryId || c.ParentCategory == null))
-                            {
-                                <option value="@category.CategoryId">@category.CategoryName</option>
-                            }
-                        </select>
-                    </div>
+                    @* <div class="mb-3"> *@
+                    @*     <label for="updateParentCategoryId" class="form-label">Parent Category</label> *@
+                    @*     <select class="form-select" id="updateParentCategoryId" asp-for="UpdateCategory.ParentCategoryId"> *@
+                    @*         <option value="">None</option> *@
+                    @*         @foreach (var category in Model.Categories.Where(c => c.ParentCategory?.CategoryId == c.CategoryId || c.ParentCategory == null)) *@
+                    @*         { *@
+                    @*             <option value="@category.CategoryId">@category.CategoryName</option> *@
+                    @*         } *@
+                    @*     </select> *@
+                    @* </div> *@
                 </div>
 
                 <div class="modal-footer">
@@ -252,20 +252,14 @@
                 const categoryId = this.getAttribute('data-id');
                 const categoryName = this.getAttribute('data-name');
                 const categoryDescription = this.getAttribute('data-description');
-                const isActive = this.getAttribute('data-active') === 'True';
+                //const isActive = this.getAttribute('data-active') === 'True';
 
                 // Gán dữ liệu vào modal
                 document.getElementById('updateCategoryId').value = categoryId;
                 document.getElementById('updateCategoryName').value = categoryName;
                 document.getElementById('updateCategoryDescription').value = categoryDescription;
-                document.getElementById('updateIsActive').checked = isActive;
-
-                console.log("hihi", document.getElementById('updateIsActive'));
-
-
-                document.getElementById('updateCategoryForm').addEventListener('submit', function () {
-                    console.log("Checkbox checked:", document.getElementById('updateIsActive').checked);
-                });
+                //document.getElementById('updateIsActive').checked = isActive;
+                
 
                 // Hiển thị modal
                 var updateModal = new bootstrap.Modal(document.getElementById('updateCategoryModal'));
