@@ -20,6 +20,8 @@ public class NewsHub : Hub
             categoryId = article.CategoryId,
             newsStatus = article.NewsStatus,
             createdById = article.CreatedById,
+            tags = article.Tags?.Select(t => t.TagName).ToList(),
+            categoryName = article.Category?.CategoryName
         });
     }
 

@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FUNewsManagementSystem", "FUNewsManagementSystem\FUNewsManagementSystem.csproj", "{1936D3B3-D572-481C-ABBC-1753DE2AA2C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject", "BusinessObject\BusinessObject.csproj", "{52FDD9E6-2AB8-4065-8FA7-BEAD313F7FF5}"
@@ -24,5 +27,8 @@ Global
 		{13BE0431-98FB-414E-A85B-9982E6B2C183}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13BE0431-98FB-414E-A85B-9982E6B2C183}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13BE0431-98FB-414E-A85B-9982E6B2C183}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

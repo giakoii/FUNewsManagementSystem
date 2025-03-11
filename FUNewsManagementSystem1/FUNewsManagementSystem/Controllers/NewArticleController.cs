@@ -1,10 +1,10 @@
 ﻿using BusinessObject.Service;
 using DataAccessObject.Models;
+using FUNewsManagementSystem.Hubs;
 using FUNewsManagementSystem.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace FUNewsManagementSystem.Controllers
 {
@@ -17,7 +17,7 @@ namespace FUNewsManagementSystem.Controllers
         private readonly ITagService _tagService;
         private readonly ICategoryService _categoryService;
         private readonly IHubContext<NewsHub> _hubContext;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -32,7 +32,7 @@ namespace FUNewsManagementSystem.Controllers
             _categoryService = categoryService;
             _hubContext = hubContext;
         }
-        
+
         /// <summary>
         /// Get New Article
         /// </summary>
@@ -66,7 +66,7 @@ namespace FUNewsManagementSystem.Controllers
                     t => t.Tags
                 );
             }
-            
+
 
             articles = sortBy switch
             {
@@ -106,7 +106,8 @@ namespace FUNewsManagementSystem.Controllers
                 NewsSource = model.NewSource,
                 NewsContent = model.NewsContent,
                 CategoryId = (short?)model.SelectedCategory,
-                CreatedDate = DateTime.UtcNow,  // Thêm timestamp
+                CreatedDate = DateTime.UtcNow,
+                Tags = model.SelectedTags.Select(tagId => _tagService.GetById(tagId)).ToList(),
                 CreatedById = GetCurrentUserId(),
             };
 
@@ -125,13 +126,15 @@ namespace FUNewsManagementSystem.Controllers
                 categoryId = newArticle.CategoryId,
                 newsStatus = newArticle.NewsStatus,
                 createdById = newArticle.CreatedById,
+                tags = newArticle.Tags?.Select(t => t.TagName).ToList(),
+                categoryName = _categoryService.GetById((short)model.SelectedCategory).CategoryName,
             });
 
             return RedirectToAction("Index");
         }
 
 
-        
+
         [HttpGet]
         public IActionResult GetLatestArticles()
         {
@@ -166,7 +169,7 @@ namespace FUNewsManagementSystem.Controllers
                 TempData["ToastMessage"] = "Article Update successfully!";
                 TempData["ToastType"] = "success";
                 _articleService.UpdateNewsArticle(existingArticle);
-                
+
                 await _hubContext.Clients.All.SendAsync("ReceiveNewsUpdate", new
                 {
                     actionType = "Update",
@@ -176,6 +179,8 @@ namespace FUNewsManagementSystem.Controllers
                     newsContent = updatedArticle.NewsContent,
                     categoryId = updatedArticle.SelectedCategory,
                     newsStatus = updatedArticle.NewsStatus,
+                    tags = existingArticle.Tags?.Select(t => t.TagName).ToList() ?? new List<string>(),
+                    categoryName = _categoryService.GetById((short)updatedArticle.SelectedCategory).CategoryName,
                 });
 
                 return RedirectToAction("Index");
@@ -201,7 +206,7 @@ namespace FUNewsManagementSystem.Controllers
                 TempData["ToastMessage"] = "Failed to delete article.";
                 TempData["ToastType"] = "danger";
             }
-            
+
             await _hubContext.Clients.All.SendAsync("ReceiveNewsUpdate", new
             {
                 actionType = "Delete",
@@ -233,7 +238,7 @@ namespace FUNewsManagementSystem.Controllers
 
             return (maxId + 1).ToString();
         }
-        
+
         /// <summary>
         /// Get Search Term
         /// </summary>
@@ -243,12 +248,12 @@ namespace FUNewsManagementSystem.Controllers
             var searchTerm = HttpContext.Request.Query["searchTerm"].ToString();
             return searchTerm;
         }
-        
+
         public IActionResult Privacy()
         {
             return View();
         }
-        
+
         public IActionResult Error()
         {
             return View();

@@ -94,7 +94,7 @@
 <!-- Đặt trong div #cardLayout, hiển thị mặc định -->
 <div id="news-list">
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-5" id="divContainer">
             @foreach (var article in Model)
             {
                 <div class="news-item card mb-3 article-card"
@@ -110,13 +110,13 @@
                         <p class="card-text">@article.Headline</p>
                         <small class="text-muted">🕒 @article.CreatedDate</small>
 
-                        <p class="card-text">
+                        <p class="card-text" id="categoryNew">
                             <strong>Category:</strong> @article.Category?.CategoryName
                         </p>
                         <p class="card-text">
                             <small class="text-muted">Article ID: @article.NewsArticleId</small>
                         </p>
-                        <p class="card-text">
+                        <p class="card-text" id="statusText">
                             <strong>Status:</strong>
                             @if (article.NewsStatus ?? false)
                             {
@@ -131,25 +131,23 @@
                 </div>
             }
         </div>
-    </div>
-</div>
-
-
-<div class="col-md-7">
-    <div id="articleDetail" class="border p-3">
-        <h4 id="detailTitle" class="mb-3">[No posts selected yet]</h4>
-        <p>
-            <strong>Category:</strong>
-            <span id="detailCategory"></span>
-        </p>
-        <p>
-            <strong>Content:</strong>
-            <span id="detailContent"></span>
-        </p>
-        <p>
-            <strong>Tags:</strong>
-            <span id="detailTags"></span>
-        </p>
+        <div class="col-md-7">
+            <div id="articleDetail" class="border p-3">
+                <h4 id="detailTitle" class="mb-3">[No posts selected yet]</h4>
+                <p>
+                    <strong>Category:</strong>
+                    <span id="detailCategory"></span>
+                </p>
+                <p>
+                    <strong>Content:</strong>
+                    <span id="detailContent"></span>
+                </p>
+                <p>
+                    <strong>Tags:</strong>
+                    <span id="detailTags"></span>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -423,7 +421,7 @@
                 $('#btnManage').text('Move To Manage Article');
             }
 
-            $('.article-card').on('click', function () {
+            $(document).on('click', '.article-card', function() {
                 $('.article-card').removeClass('border border-primary');
                 $(this).addClass('border border-primary');
                 var title = $(this).data('title');
@@ -459,7 +457,6 @@
                     document.getElementById('switchManage').switchButton('off', true)
                     $('#cardLayout').hide();
                     $(this).text('Back to Card');
-                    à
                 } else {
                     $('#cardLayout').show();
                     $('#btnAddArticle').hide();
@@ -587,42 +584,45 @@
             }
 
             // ✅ 4. Tạo component bài viết
-            function createArticleElement(article) {
-                const articleElement = document.createElement("div");
-                articleElement.className = "col-md-5";
-                articleElement.dataset.id = article.newsId;
+                       function createArticleElement(article) {
+                    const container = document.getElementById("divContainer");
+            if (!container) return;
 
-                articleElement.innerHTML = `
-            <div class="news-item card mb-3 article-card"
-                 style="cursor: pointer;"
-                 data-id="${article.newsId}"
-                 data-title="${article.newsTitle}"
-                 data-category="${article.categoryName}"
-                 data-content="${article.newsContent}"
-                 data-tags="${article.tags?.join(';')}">
-                
-                <div class="card-body">
-                    <h4 class="card-title">${article.newsTitle}</h4>
-                    <p class="card-text">${article.headline}</p>
-                    <small class="text-muted">🕒 ${article.createdAt}</small>
+            // Tạo chuỗi HTML
+            const cardHtml = `
+        <div class="news-item card mb-3 article-card"
+             style="cursor: pointer;"
+             data-id="${article.newsId ?? ""}"
+             data-title="${article.newsTitle ?? ""}"
+             data-category="${article.categoryName ?? ""}"
+             data-content="${article.newsContent ?? ""}"
+             data-tags="${(article.tags ?? []).join(";")}">
 
-                    <p class="card-text">
-                        <strong>Category:</strong> ${article.categoryName ?? "N/A"}
-                    </p>
-                    <p class="card-text">
-                        <small class="text-muted">Article ID: ${article.newsId}</small>
-                    </p>
-                    <p class="card-text">
-                        <strong>Status:</strong>
-                        ${article.newsStatus
-                    ? `<span class="badge bg-success">Open</span>`
-                    : `<span class="badge bg-danger">Close</span>`}
-                    </p>
-                </div>
+            <div class="card-body">
+                <h4 class="card-title">${article.newsTitle ?? ""}</h4>
+                <p class="card-text">${article.headline ?? ""}</p>
+                <small class="text-muted">🕒 ${article.createdAt ?? ""}</small>
+
+                <p class="card-text">
+                    <strong>Category:</strong> ${article.categoryName ?? "N/A"}
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">Article ID: ${article.newsId ?? ""}</small>
+                </p>
+                <p class="card-text" id="statusText">
+                    <strong>Status:</strong>
+                    ${
+                        article.newsStatus
+                            ? '<span class="badge bg-success">Open</span>'
+                            : '<span class="badge bg-danger">Close</span>'
+                    }
+                </p>
             </div>
+        </div>
         `;
-                return articleElement;
-            }
+            container.insertAdjacentHTML("afterbegin", cardHtml);
+            console.log("HTML", cardHtml);
+                }
 
             // ✅ 5. Thêm bài viết mới vào danh sách
             function addArticleToList(article) {
@@ -631,18 +631,30 @@
                     console.error("❌ Không tìm thấy #news-list .row, kiểm tra lại HTML!");
                     return;
                 }
-
+                console.log("tags:", article.tags);
                 const articleElement = createArticleElement(article);
-                newsList.prepend(articleElement);
             }
 
             // ✅ 6. Cập nhật bài viết trong danh sách
             function updateArticleInList(article) {
-                const articleElement = document.querySelector(`[data-id="${article.newsId}"]`);
-                if (!articleElement) return;
+                if (article.newsStatus) {
+                            console.log("Status", article.newsStatus);
+                          const articleElement = createArticleElement(article);
+                    } else {
+                        console.log("Removing card:", card);
+                        card.remove();
+                    }
+                const card = document.querySelector(`[data-id="${article.newsId}"]`);
+                if (!card) return;
+                const titleEl = card.querySelector(".card-title");
+                if (titleEl) titleEl.textContent = article.newsTitle ?? "";
+                const pText = card.querySelectorAll(".card-text");
+                const statusEl = document.getElementById("statusText");
+                const categoryEl = document.getElementById("categoryNew");
+                categoryEl.innerHTML = `<strong>Category:</strong> ${article.categoryName || "N/A"}`;
+                            console.log("Status", article.newsStatus);
 
-                articleElement.querySelector(".card-title").textContent = article.newsTitle;
-                articleElement.querySelector(".card-text").textContent = article.headline;
+                    
             }
 
             // ✅ 7. Xóa bài viết khỏi danh sách
