@@ -106,23 +106,37 @@ namespace FUNewsManagementSystem.Controllers
                 NewsSource = model.NewSource,
                 NewsContent = model.NewsContent,
                 CategoryId = (short?)model.SelectedCategory,
+                CreatedDate = DateTime.UtcNow,  // Thêm timestamp
                 CreatedById = GetCurrentUserId(),
             };
-            if (model.SelectedTags != null && model.SelectedTags.Any())
-            {
-                foreach (var tagId in model.SelectedTags)
-                {
-                    var tag = _tagService.GetById(tagId);
-                    if (tag != null)
-                    {
-                        newArticle.Tags.Add(tag);
-                    }
-                }
-            }
 
             _articleService.AddNewsArticle(newArticle);
-            await _hubContext.Clients.All.SendAsync("ReceiveNewsUpdate", "New article created");
+
+            // ✅ Gửi dữ liệu bài viết mới qua SignalR
+            await _hubContext.Clients.All.SendAsync("ReceiveNewsUpdate", new
+            {
+                actionType = "Create",
+                newsId = newArticle.NewsArticleId,
+                newsTitle = newArticle.NewsTitle,
+                headline = newArticle.Headline,
+                createdAt = newArticle.CreatedDate,
+                newsContent = newArticle.NewsContent,
+                newsSource = newArticle.NewsSource,
+                categoryId = newArticle.CategoryId,
+                newsStatus = newArticle.NewsStatus,
+                createdById = newArticle.CreatedById,
+            });
+
             return RedirectToAction("Index");
+        }
+
+
+        
+        [HttpGet]
+        public IActionResult GetLatestArticles()
+        {
+            var articles = _articleService.GetBy().OrderByDescending(a => a.NewsArticleId).Take(10);
+            return PartialView("_NewsListPartial", articles);
         }
         /// <summary>
         /// Update Article
@@ -131,7 +145,7 @@ namespace FUNewsManagementSystem.Controllers
         /// <param name="SelectedTags"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult UpdateArticle(EditNewsArticleVM updatedArticle, List<int> SelectedTags)
+        public async Task<IActionResult> UpdateArticle(EditNewsArticleVM updatedArticle, List<int> SelectedTags)
         {
             var existingArticle = _articleService.GetById(updatedArticle.NewsArticleId);
 
@@ -152,6 +166,18 @@ namespace FUNewsManagementSystem.Controllers
                 TempData["ToastMessage"] = "Article Update successfully!";
                 TempData["ToastType"] = "success";
                 _articleService.UpdateNewsArticle(existingArticle);
+                
+                await _hubContext.Clients.All.SendAsync("ReceiveNewsUpdate", new
+                {
+                    actionType = "Update",
+                    newsId = updatedArticle.NewsArticleId,
+                    newsTitle = updatedArticle.NewsTitle,
+                    headline = updatedArticle.HeadLine,
+                    newsContent = updatedArticle.NewsContent,
+                    categoryId = updatedArticle.SelectedCategory,
+                    newsStatus = updatedArticle.NewsStatus,
+                });
+
                 return RedirectToAction("Index");
             }
             return NotFound();
@@ -162,7 +188,7 @@ namespace FUNewsManagementSystem.Controllers
         /// <param name="newsArticleId"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult DeleteArticle(string newsArticleId)
+        public async Task<IActionResult> DeleteArticle(string newsArticleId)
         {
             var isDeleted = _articleService.DeleteNewsArticle(newsArticleId);
             if (isDeleted)
@@ -175,6 +201,12 @@ namespace FUNewsManagementSystem.Controllers
                 TempData["ToastMessage"] = "Failed to delete article.";
                 TempData["ToastType"] = "danger";
             }
+            
+            await _hubContext.Clients.All.SendAsync("ReceiveNewsUpdate", new
+            {
+                actionType = "Delete",
+                newsId = newsArticleId
+            });
 
             return RedirectToAction("Index");
         }

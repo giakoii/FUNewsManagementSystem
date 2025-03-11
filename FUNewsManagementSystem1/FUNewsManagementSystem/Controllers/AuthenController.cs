@@ -31,30 +31,30 @@ public class AuthenController : Controller
             return RedirectToAction("Index", "NewArticle");
         }
 
-        return View(new LoginRequest());
+        return View(new LoginViewModel());
     }
     
     /// <summary>
     /// Login action (POST)
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="viewModel"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> Login(LoginRequest request)
+    public async Task<IActionResult> Login(LoginViewModel viewModel)
     {
         if (!ModelState.IsValid)
         {
-            return View("Index", request);
+            return View("Index", viewModel);
         }
 
-        var user = await _systemAccountService.LoginAsync(request.Email, request.Password);
+        var user = await _systemAccountService.LoginAsync(viewModel.Email, viewModel.Password);
 
         if (user == null)
         {
             ModelState.AddModelError("", "Invalid email or password");
-            user = await _systemAccountService.LoginAdmin(request.Email, request.Password);
+            user = await _systemAccountService.LoginAdmin(viewModel.Email, viewModel.Password);
             if (user == null)
-                return View("Index", request);
+                return View("Index", viewModel);
         }
 
         string role = "";

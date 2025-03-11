@@ -85,6 +85,6 @@ public class Login : PageModel
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
             new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTime.UtcNow.AddDays(7) });
 
-        return RedirectToPage(role == "Admin" ? "/Admin/Dashboard" : "/NewArticle");
+        return RedirectToPage(role == "Admin" ? "/Admin/Dashboard" : "/NewArticle/Index");
     }
 }

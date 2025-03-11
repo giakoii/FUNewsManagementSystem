@@ -1,36 +1,36 @@
-@model FUNewsManagementSystem.Models.ViewModel.LoginRequest
+@page
+@model FUNewsManagementSystem2.Pages.Auth.Login
 
 @{
     ViewData["Title"] = "Login";
 }
-
 <div class="d-flex justify-content-center align-items-center min-vh-100">
     <div class="login-container p-4 bg-white rounded shadow w-75">
         <h3 class="text-center mb-4">Login</h3>
 
-        @if (ViewData.ModelState.ErrorCount > 0)
+        @if (ModelState.ErrorCount > 0)
         {
             <div class="alert alert-danger">
-                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                @foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     <div>@error.ErrorMessage</div>
                 }
             </div>
         }
 
-        <form asp-action="Login" method="post">
+        <form method="post">
             @Html.AntiForgeryToken()
 
             <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
-                <input asp-for="Email" class="form-control" placeholder="Enter email" autocomplete="off"/>
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="LoginRequest.Email" class="form-label">Email</label>
+                <input asp-for="LoginRequest.Email" class="form-control" placeholder="Enter email" autocomplete="off"/>
+                <span asp-validation-for="LoginRequest.Email" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Password" class="form-label">Password</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" id="password" autocomplete="off"/>
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="LoginRequest.Password" class="form-label">Password</label>
+                <input asp-for="LoginRequest.Password" type="password" class="form-control" placeholder="Enter password" id="password" autocomplete="off"/>
+                <span asp-validation-for="LoginRequest.Password" class="text-danger"></span>
             </div>
 
             <div class="form-check mb-3">
@@ -45,9 +45,6 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
     <script>
         // Toggle Show Password
         $(document).ready(function () {

@@ -2,64 +2,58 @@ using AutoMapper;
 using BusinessLogic.DTOs;
 using BusinessObject.Service;
 using DataAccessObject.Models;
-using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.SignalR;
 
-namespace FUNewsManagementSystem2.Pages.NewArticle;
-
-public class Index : PageModel
+namespace FUNewsManagementSystem2.Pages.NewArticle
 {
-    private readonly INewArticleService _articleService;
-    private readonly ITagService _tagService;
-    private readonly ICategoryService _categoryService;
-    private readonly IHubContext<NewsHub> _hubContext;
-    
-    private readonly IMapper _mapper;
-
-    public List<NewsArticleDto> Articles { get; set; }
-    public List<Category> Categories { get; set; }
-    public List<Tag> Tags { get; set; }
-    [BindProperty(SupportsGet = true)] public string SearchTerm { get; set; }
-    [BindProperty(SupportsGet = true)] public string SortBy { get; set; } = "Title";
-    [BindProperty(SupportsGet = true)] public string SortOrder { get; set; } = "asc";
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="articleService"></param>
-    /// <param name="tagService"></param>
-    /// <param name="categoryService"></param>
-    /// <param name="hubContext"></param>
-    public Index(INewArticleService articleService, ITagService tagService, ICategoryService categoryService, IHubContext<NewsHub> hubContext)
+    public class Index : PageModel
     {
-        _articleService = articleService;
-        _tagService = tagService;
-        _categoryService = categoryService;
-        _hubContext = hubContext;
-    }
+        private readonly IMapper _mapper;
+        private readonly INewArticleService _articleService;
+        private readonly ITagService _tagService;
+        private readonly ICategoryService _categoryService;
 
-    /// <summary>
-    /// Get New Article
-    /// </summary>
-    public void OnGet()
-    {
-        // Get all categories, tags, and articles
-        // Categories = _categoryService.GetBy().ToList();
-        // Tags = _tagService.GetBy().ToList();
-        // Articles = _articleService.GetBy(
-        //     x => x.NewsStatus == true && x.NewsTitle.ToLower().Contains(SearchTerm.ToLower() ?? ""),
-        //     true, a => a.Category, t => t.Tags
-        // ).ToList();
-        //
-        // // Sort articles
-        // Articles = SortBy switch
-        // {
-        //     "Title" => SortOrder == "asc" ? Articles.OrderBy(a => a.NewsTitle).ToList() : Articles.OrderByDescending(a => a.NewsTitle).ToList(),
-        //     "Id" => SortOrder == "asc" ? Articles.OrderBy(a => a.NewsArticleId).ToList() : Articles.OrderByDescending(a => a.NewsArticleId).ToList(),
-        //     "Date" => SortOrder == "asc" ? Articles.OrderBy(a => a.CreatedDate).ToList() : Articles.OrderByDescending(a => a.CreatedDate).ToList(),
-        //     _ => Articles
-        // };
+        public List<NewsArticleDto> Articles { get; set; }
+        public List<CategoryDto> Categories { get; set; }
+        public List<TagDto> Tags { get; set; }
+
+        [BindProperty(SupportsGet = true)] public string SearchTerm { get; set; }
+        [BindProperty(SupportsGet = true)] public string SortBy { get; set; } = "Title";
+        [BindProperty(SupportsGet = true)] public string SortOrder { get; set; } = "asc";
+
+        [BindProperty] public NewsArticleDto NewArticle { get; set; }
+        [BindProperty] public List<int> SelectedTags { get; set; }
+
+        public Index(IMapper mapper, INewArticleService articleService, ITagService tagService, ICategoryService categoryService)
+        {
+            _mapper = mapper;
+            _articleService = articleService;
+            _tagService = tagService;
+            _categoryService = categoryService;
+        }
+
+        public void OnGet()
+        {
+            Categories = _mapper.Map<List<CategoryDto>>(_categoryService.GetBy().ToList());
+            Tags = _mapper.Map<List<TagDto>>(_tagService.GetBy().ToList());
+
+            var articles = _articleService.GetBy(x => x.NewsStatus == true
+                , false
+                , x => x.Category
+                , x => x.Tags).ToList();
+            Articles = _mapper.Map<List<NewsArticleDto>>(articles);
+        }
+
+        public IActionResult OnPostAddArticle()
+        {
+            if (!ModelState.IsValid) return Page();
+
+            var article = _mapper.Map<NewsArticle>(NewArticle);
+            article.Tags = _tagService.GetBy(t => SelectedTags.Contains(t.TagId)).ToList();
+
+            _articleService.AddNewsArticle(article);
+            return RedirectToPage();
+        }
     }
 }

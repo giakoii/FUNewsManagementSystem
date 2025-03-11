@@ -7,32 +7,39 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Cấu hình DbContext
 builder.Services.AddDbContext<FUNewsManagementSystemContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// Cấu hình AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// ✅ Sử dụng Razor Pages thay vì MVC
+builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 
+// Đăng ký các Service (Dependency Injection)
 builder.Services.AddScoped(typeof(IBaseService<,>), typeof(BaseService<,>));
 builder.Services.AddScoped<INewArticleService, NewArticleService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
 builder.Services.AddScoped<FUNewsManagementSystemContext>();
+
 builder.Services.Configure<AdminAccount>(builder.Configuration.GetSection("AdminAccount"));
+
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
      .AddCookie(options =>
      {
-         options.LoginPath = "/NewArticle/Index";
+         options.LoginPath = "/Login";  
          options.ExpireTimeSpan = TimeSpan.FromDays(7);
          options.SlidingExpiration = true;
          options.Cookie.IsEssential = true;
      });
+
 builder.Services.AddScoped(typeof(BaseRepository<,>));
 builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
 builder.Services.AddScoped<INewArticelRepository, NewArticleRepository>();
@@ -41,13 +48,11 @@ builder.Services.AddScoped<ITagRepository, TagsRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/NewArticle/Error");
+    app.UseExceptionHandler("/Error"); 
     app.UseHsts();
 }
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -55,11 +60,14 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<NewsHub>("/newshub");
+    endpoints.MapRazorPages();
+    endpoints.MapFallbackToPage("/Auth/Login");
 });
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Authen}/{action=Index}/{id?}");
+
+app.MapRazorPages();
+
 app.Run();

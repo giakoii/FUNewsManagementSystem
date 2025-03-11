@@ -75,10 +75,6 @@
               <input type="email" class="form-control" id="addUserEmail" required>
             </div>
             <div class="mb-3">
-              <label for="addUserPassword" class="form-label">Password</label>
-              <input type="password" class="form-control" id="addUserPassword" required>
-            </div>
-            <div class="mb-3">
               <label for="addUserRole" class="form-label">Role</label>
               <select class="form-select" id="addUserRole" required>
                 <option value="1">Staff</option>
@@ -111,10 +107,6 @@
               <input type="email" class="form-control" id="editUserEmail" required>
             </div>
             <div class="mb-3">
-              <label for="editUserPassword" class="form-label">New Password (Leave blank if unchanged)</label>
-              <input type="password" class="form-control" id="editUserPassword">
-            </div>
-            <div class="mb-3">
               <label for="editUserRole" class="form-label">Role</label>
               <select class="form-select" id="editUserRole" required>
                 <option value="1">Staff</option>
@@ -139,7 +131,6 @@
         var userId = $(this).data("id");
         var userName = $(this).data("name");
         var userEmail = $(this).data("email");
-        var userPassword = $(this).data("password");
         var userRole = $(this).data("role");
         if (!userId) {
           alert("Error: User ID is missing!");
@@ -148,7 +139,6 @@
         $("#editUserId").val(userId);
         $("#editUserName").val(userName);
         $("#editUserEmail").val(userEmail);
-        $("#editUserPassword").val(userPassword);
         $("#editUserRole").val(userRole);
         $("#editUserModal").modal("show");
       });
@@ -157,7 +147,6 @@
         var id = $("#editUserId").val();
         var name = $("#editUserName").val();
         var email = $("#editUserEmail").val();
-        var password = $("#editUserPassword").val();
         var role = $("#editUserRole").val();
         $.ajax({
           url: "/Admin/UpdateUser",
@@ -185,7 +174,6 @@
       e.preventDefault();
       var name = $("#addUserName").val();
       var email = $("#addUserEmail").val();
-      var password = $("#addUserPassword").val();
       var role = $("#addUserRole").val();
       $.ajax({
         url: "/Admin/CreateUser",
@@ -194,7 +182,6 @@
         data: JSON.stringify({
           AccountName: name,
           AccountEmail: email,
-          Password: password,
           RoleId: parseInt(role)
         }),
         success: function() {

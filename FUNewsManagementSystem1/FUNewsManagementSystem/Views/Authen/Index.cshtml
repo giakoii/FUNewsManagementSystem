@@ -1,7 +1,7 @@
-@model FUNewsManagementSystem.Models.ViewModel.LoginRequest
+@model FUNewsManagementSystem.Models.ViewModel.LoginViewModel
 
 @{
-    ViewData["Title"] = "Login";
+    ViewBag.Title = "Login";
 }
 
 <!-- Wrapper để căn giữa form -->
@@ -9,7 +9,7 @@
     <div class="login-container p-4 bg-white rounded shadow w-75">
         <h3 class="text-center mb-4">Login</h3>
 
-        @if (ViewData.ModelState.ErrorCount > 0)
+        @if (!ViewData.ModelState.IsValid)
         {
             <div class="alert alert-danger">
                 @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
@@ -19,19 +19,19 @@
             </div>
         }
 
-        <form asp-page-handler="Login" method="post">
+        <form action="@Url.Action("Login", "Authen")" method="post">
             @Html.AntiForgeryToken()
 
             <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
-                <input asp-for="Email" class="form-control" placeholder="Enter email" autocomplete="off"/>
-                <span asp-validation-for="Email" class="text-danger"></span>
+                @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Enter email", autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
             </div>
 
             <div class="mb-3">
-                <label asp-for="Password" class="form-label">Password</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" id="password" autocomplete="off"/>
-                <span asp-validation-for="Password" class="text-danger"></span>
+                @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Enter password", id = "password", autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-check mb-3">

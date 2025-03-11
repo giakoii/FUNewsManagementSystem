@@ -6,7 +6,19 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+@* <div id="news-list"> *@
+@*     @foreach (var article in Model) *@
+@*     { *@
+@*         <div class="news-item"> *@
+@*             <h4>@article.NewsTitle</h4> *@
+@*             <p>@article.Headline</p> *@
+@*             <small>🕒 @article.CreatedDate</small> *@
+@*         </div> *@
+@*     } *@
+@* </div> *@
 
+<!-- Vùng hiển thị thông báo -->
+<div class="toast-container position-fixed top-0 end-0 p-3"></div>
 <!-- Form Search (nếu có) -->
 <form method="get" asp-controller="NewArticle" asp-action="Index" class="mb-3">
     <div class="input-group">
@@ -17,7 +29,7 @@
                name="searchTerm"
                class="form-control"
                placeholder="Search..."
-               value="@searchTermValue" />
+               value="@searchTermValue"/>
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
@@ -43,12 +55,14 @@
         @if (TempData["ToastMessage"] != null)
         {
             var toastType = TempData["ToastType"]?.ToString() ?? "info";
-            <div class="toast align-items-center text-bg-@toastType border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast align-items-center text-bg-@toastType border-0 show" role="alert" aria-live="assertive"
+                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
                         @TempData["ToastMessage"]
                     </div>
-                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
                 </div>
             </div>
         }
@@ -62,12 +76,12 @@
         <!-- Switch Manage Mode -->
         <input type="checkbox"
                id="switchManage"
-               data-toggle="switchbutton"
+               data-toggle="switch button"
                checked
                data-width="100"
                data-onlabel="Manage"
                data-offlabel="View"
-               data-offstyle="info" />
+               data-offstyle="info"/>
     </div>
     <button id="btnAddArticle" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">
         Add New Article
@@ -78,98 +92,32 @@
 }
 <!-- ========== CARD LAYOUT ========== -->
 <!-- Đặt trong div #cardLayout, hiển thị mặc định -->
-<div id="cardLayout">
+<div id="news-list">
     <div class="row">
         <div class="col-md-5">
             @foreach (var article in Model)
             {
-                <div class="card mb-3 article-card"
+                <div class="news-item card mb-3 article-card"
                      style="cursor: pointer;"
                      data-id="@article.NewsArticleId"
                      data-title="@article.NewsTitle"
-                     data-category="@article.Category.CategoryName"
+                     data-category="@article.Category?.CategoryName"
                      data-content="@article.NewsContent"
                      data-tags="@string.Join(";", article.Tags.Select(t => t.TagName))">
 
                     <div class="card-body">
-                        <h5 class="card-title">@article.NewsTitle</h5>
+                        <h4 class="card-title">@article.NewsTitle</h4>
+                        <p class="card-text">@article.Headline</p>
+                        <small class="text-muted">🕒 @article.CreatedDate</small>
+
                         <p class="card-text">
-                            <strong>Category:</strong> @article.Category.CategoryName
+                            <strong>Category:</strong> @article.Category?.CategoryName
                         </p>
                         <p class="card-text">
                             <small class="text-muted">Article ID: @article.NewsArticleId</small>
                         </p>
-                            <p class="card-text">
-                                <strong>Status:</strong>
-                                @if (article.NewsStatus ?? false)
-                                {
-                                    <span class="badge bg-success">Open</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Close</span>
-                                }
-                            </p>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <div class="col-md-7">
-            <div id="articleDetail" class="border p-3">
-                <h4 id="detailTitle" class="mb-3">[Chưa chọn bài viết]</h4>
-                <p>
-                    <strong>Category:</strong>
-                    <span id="detailCategory"></span>
-                </p>
-                <p>
-                    <strong>Content:</strong>
-                    <span id="detailContent"></span>
-                </p>
-                <p>
-                    <strong>Tags:</strong>
-                    <span id="detailTags"></span>
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========== TABLE LAYOUT ========== -->
-<!-- Đặt trong div #tableLayout, ban đầu ẩn -->
-@if (User.IsInRole("Staff"))
-{
-    <div id="tableLayout" style="display: none;">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Mã</th>
-                    <th>Tiêu đề</th>
-                    <th>Nội dung</th>
-                    <th>Category Name</th>
-                    <th>Tag Name</th>
-                    <th>Ngày đăng</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var article in Model)
-                {
-                    <tr>
-                        <td>@article.NewsArticleId</td>
-                        <td>@article.NewsTitle</td>
-                        <td>@article.NewsContent</td>
-                        <td>@article.Category.CategoryName</td>
-                        <td>@string.Join(", ", article.Tags.Select(tag => tag.TagName))</td>
-                        <td>
-                            @(
-                                article.CreatedDate.HasValue
-                                ? article.CreatedDate.Value.ToString("dd/MM/yyyy")
-                                : ""
-                                )
-                        </td>
-                        <td>
+                        <p class="card-text">
+                            <strong>Status:</strong>
                             @if (article.NewsStatus ?? false)
                             {
                                 <span class="badge bg-success">Open</span>
@@ -178,30 +126,101 @@
                             {
                                 <span class="badge bg-danger">Close</span>
                             }
-                        </td>
-                        <td>
-                            <button class="btn btn-warning btn-sm edit-article-btn"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#updateArticleModal"
-                                    data-id="@article.NewsArticleId"
-                                    data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
-                                    data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))"
-                                    data-category="@article.Category.CategoryId"
-                                    data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))"
-                                    data-status="@article.NewsStatus">
-                                Edit
-                            </button>
-                            <button class="btn btn-danger btn-sm delete-article-btn"
-                                    data-id="@article.NewsArticleId"
-                                    data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteArticleModal">
-                                Delete
-                            </button>
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
-                        </td>
-                    </tr>
-                }
+
+<div class="col-md-7">
+    <div id="articleDetail" class="border p-3">
+        <h4 id="detailTitle" class="mb-3">[No posts selected yet]</h4>
+        <p>
+            <strong>Category:</strong>
+            <span id="detailCategory"></span>
+        </p>
+        <p>
+            <strong>Content:</strong>
+            <span id="detailContent"></span>
+        </p>
+        <p>
+            <strong>Tags:</strong>
+            <span id="detailTags"></span>
+        </p>
+    </div>
+</div>
+
+
+<!-- ========== TABLE LAYOUT ========== -->
+<!-- Đặt trong div #tableLayout, ban đầu ẩn -->
+@if (User.IsInRole("Staff"))
+{
+    <div id="tableLayout" style="display: none;">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Category Name</th>
+                <th>Tag Name</th>
+                <th>Created Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var article in Model)
+            {
+                <tr>
+                    <td>@article.NewsArticleId</td>
+                    <td>@article.NewsTitle</td>
+                    <td>@article.NewsContent</td>
+                    <td>@article.Category!.CategoryName</td>
+                    <td>@string.Join(", ", article.Tags.Select(tag => tag.TagName))</td>
+                    <td>
+                        @(
+                        article.CreatedDate.HasValue
+                            ? article.CreatedDate.Value.ToString("dd/MM/yyyy")
+                            : ""
+                        )
+                    </td>
+                    <td>
+                        @if (article.NewsStatus ?? false)
+                        {
+                            <span class="badge bg-success">Open</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Close</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm edit-article-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#updateArticleModal"
+                                data-id="@article.NewsArticleId"
+                                data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
+                                data-content="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsContent))"
+                                data-category="@article.Category.CategoryId"
+                                data-tags="@string.Join(",", article.Tags.Select(t => t.TagId))"
+                                data-status="@article.NewsStatus">
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-article-btn"
+                                data-id="@article.NewsArticleId"
+                                data-title="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(article.NewsTitle))"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteArticleModal">
+                            Delete
+                        </button>
+
+                    </td>
+                </tr>
+            }
             </tbody>
         </table>
     </div>
@@ -219,17 +238,17 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="newsTitle" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="newsTitle" name="NewsTitle" required />
+                        <input type="text" class="form-control" id="newsTitle" name="NewsTitle" required/>
                     </div>
 
                     <div class="mb-3">
                         <label for="headLine" class="form-label">Headline</label>
-                        <input type="text" class="form-control" id="headLine" name="HeadLine" />
+                        <input type="text" class="form-control" id="headLine" name="HeadLine"/>
                     </div>
 
                     <div class="mb-3">
                         <label for="newSource" class="form-label">News Source</label>
-                        <input type="text" class="form-control" id="newSource" name="NewSource" />
+                        <input type="text" class="form-control" id="newSource" name="NewSource"/>
                     </div>
 
                     <div class="mb-3">
@@ -258,7 +277,7 @@
                                            type="checkbox"
                                            id="tag_@tag.TagId"
                                            name="SelectedTags"
-                                           value="@tag.TagId" />
+                                           value="@tag.TagId"/>
                                     <label class="form-check-label" for="tag_@tag.TagId">@tag.TagName</label>
                                 </div>
                             }
@@ -277,7 +296,8 @@
 </div>
 
 <!-- Modal Update Article -->
-<div class="modal fade" id="updateArticleModal" tabindex="-1" aria-labelledby="updateArticleModalLabel" aria-hidden="true">
+<div class="modal fade" id="updateArticleModal" tabindex="-1" aria-labelledby="updateArticleModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <form id="updateArticleForm" method="post" asp-action="UpdateArticle">
@@ -288,11 +308,11 @@
                 <div class="modal-body">
 
                     <!-- Hidden field for Article ID -->
-                    <input type="hidden" id="updateNewsId" name="NewsArticleId" />
+                    <input type="hidden" id="updateNewsId" name="NewsArticleId"/>
 
                     <div class="mb-3">
                         <label for="updateNewsTitle" class="form-label">Title</label>
-                        <input type="text" id="updateNewsTitle" name="NewsTitle" class="form-control" required />
+                        <input type="text" id="updateNewsTitle" name="NewsTitle" class="form-control" required/>
                     </div>
 
                     <div class="mb-3">
@@ -329,7 +349,7 @@
                                            type="checkbox"
                                            id="tag_@tag.TagId"
                                            name="SelectedTags"
-                                           value="@tag.TagId" />
+                                           value="@tag.TagId"/>
                                     <label class="form-check-label" for="tag_@tag.TagId">@tag.TagName</label>
                                 </div>
                             }
@@ -347,7 +367,8 @@
 </div>
 
 <!-- Modal Delete Article -->
-<div class="modal fade" id="deleteArticleModal" tabindex="-1" aria-labelledby="deleteArticleModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteArticleModal" tabindex="-1" aria-labelledby="deleteArticleModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form id="deleteArticleForm" method="post" asp-action="DeleteArticle">
@@ -356,7 +377,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="deleteArticleId" name="NewsArticleId" />
+                    <input type="hidden" id="deleteArticleId" name="NewsArticleId"/>
 
                     <p>Are you sure you want to delete the article:</p>
                     <h5 id="deleteArticleTitle" class="text-danger"></h5>
@@ -437,7 +458,8 @@
                     $('#btnAddArticle').show();
                     document.getElementById('switchManage').switchButton('off', true)
                     $('#cardLayout').hide();
-                    $(this).text('Back to Card');à
+                    $(this).text('Back to Card');
+                    à
                 } else {
                     $('#cardLayout').show();
                     $('#btnAddArticle').hide();
@@ -446,86 +468,98 @@
                     $(this).text('Move To Manage Article');
                 }
             });
-             $('.edit-article-btn').on('click', function () {
+            $('.edit-article-btn').on('click', function () {
 
-            // Lấy dữ liệu từ các data-* attribute
-            var id = $(this).data('id');
-            var title = $(this).data('title');
-            var content = $(this).data('content');
-            var category = $(this).data('category');
-            var tags = $(this).data('tags');
-            var status = $(this).data('status');
-            // Điền dữ liệu vào Modal Update
-            $('#updateArticleModal #updateNewsId').val(id);
-            $('#updateArticleModal #updateNewsTitle').val(title);
-            $('#updateArticleModal #updateNewsContent').val(content);
-            $('#updateArticleModal #updateCategory').val(category);
-            $('#updateArticleModal #updateNewsStatus').val((status && status.toString().toLowerCase() === "true") ? "true" : "false");
-            // Reset tất cả các checkbox tag
-            $('#updateArticleModal input[name="SelectedTags"]').prop('checked', false);
+                // Lấy dữ liệu từ các data-* attribute
+                var id = $(this).data('id');
+                var title = $(this).data('title');
+                var content = $(this).data('content');
+                var category = $(this).data('category');
+                var tags = $(this).data('tags');
+                var status = $(this).data('status');
+                // Điền dữ liệu vào Modal Update
+                $('#updateArticleModal #updateNewsId').val(id);
+                $('#updateArticleModal #updateNewsTitle').val(title);
+                $('#updateArticleModal #updateNewsContent').val(content);
+                $('#updateArticleModal #updateCategory').val(category);
+                $('#updateArticleModal #updateNewsStatus').val((status && status.toString().toLowerCase() === "true") ? "true" : "false");
+                // Reset tất cả các checkbox tag
+                $('#updateArticleModal input[name="SelectedTags"]').prop('checked', false);
 
-            // Đánh dấu các tag đã chọn
-            if (tags) {
-                var tagArray = tags.split(',');
-                tagArray.forEach(function (tagId) {
-                    $('#updateArticleModal #tag_' + tagId.trim()).prop('checked', true);
-                });
-            }
-        });
+                // Đánh dấu các tag đã chọn
+                if (tags) {
+                    var tagArray = tags.split(',');
+                    tagArray.forEach(function (tagId) {
+                        $('#updateArticleModal #tag_' + tagId.trim()).prop('checked', true);
+                    });
+                }
+            });
             $('.delete-article-btn').on('click', function () {
-            var id = $(this).data('id');
-            var title = $(this).data('title');
+                var id = $(this).data('id');
+                var title = $(this).data('title');
 
-            // Gán giá trị vào modal
-            $('#deleteArticleModal #deleteArticleId').val(id);
-            $('#deleteArticleModal #deleteArticleTitle').text(title);
+                // Gán giá trị vào modal
+                $('#deleteArticleModal #deleteArticleId').val(id);
+                $('#deleteArticleModal #deleteArticleTitle').text(title);
             });
         });
 
         document.addEventListener('DOMContentLoaded', function () {
             var toastElList = [].slice.call(document.querySelectorAll('.toast'))
             var toastList = toastElList.map(function (toastEl) {
-                return new bootstrap.Toast(toastEl, { delay: 1500 });
+                return new bootstrap.Toast(toastEl, {delay: 1500});
             });
 
             toastList.forEach(toast => toast.show());
         });
     </script>
-    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css"
+          rel="stylesheet">
+    <script
+        src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Khởi tạo kết nối SignalR
+            // Connect with SignalR
             const connection = new signalR.HubConnectionBuilder()
-                .withUrl("/newshub") // URL của Hub (trùng với MapHub trong server)
-                .withAutomaticReconnect([0, 2000, 5000, 10000]) // Tự động reconnect
-                .configureLogging(signalR.LogLevel.Information) // Log thông tin
+                .withUrl("/newshub")
+                .withAutomaticReconnect([0, 2000, 5000, 10000])
+                .configureLogging(signalR.LogLevel.Information)
                 .build();
 
-            // Xử lý sự kiện nhận thông báo từ Hub
-            connection.on("ReceiveNewsUpdate", function (message) {
-                showToast(message); // Hiển thị toast thay vì alert
+            // Listen to ReceiveNewsUpdate event
+            connection.on("ReceiveNewsUpdate", function (article) {
+                console.log("📢 Received action:", article.actionType);
+
+                if (article.actionType === "Create") {
+                    showToast(`🆕 New article: ${article.newsTitle}`);
+                    addArticleToList(article);
+                } else if (article.actionType === "Update") {
+                    showToast(`✏️ Updated article: ${article.newsTitle}`);
+                    updateArticleInList(article);
+                } else if (article.actionType === "Delete") {
+                    showToast(`🗑️ Deleted article ID: ${article.newsId}`);
+                    removeArticleFromList(article.newsId);
+                }
             });
 
-            // Hàm kết nối SignalR với retry logic
+            // 
             async function startConnection() {
                 try {
                     await connection.start();
-                    console.log("✅ Connected to SignalR!");
+                    console.log("✅ SignalR Connected!");
                 } catch (err) {
                     console.error("❌ Connection failed. Retrying in 5s...", err);
-                    setTimeout(startConnection, 5000); // Retry sau 5s
+                    setTimeout(startConnection, 5000);
                 }
             }
 
-            // Gọi hàm kết nối
             startConnection();
 
-            // Hiển thị thông báo toast
+            // ✅ 3. Hiển thị thông báo (Toast)
             function showToast(message) {
                 const toastContainer = document.querySelector(".toast-container");
                 if (!toastContainer) return;
@@ -537,21 +571,89 @@
                 toast.setAttribute("aria-atomic", "true");
 
                 toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">${message}</div>
-                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
 
                 toastContainer.appendChild(toast);
 
-                // Tự động ẩn sau 3s
+                // 🕒 Tự động ẩn sau 3s
                 setTimeout(() => {
                     toast.classList.remove("show");
                     setTimeout(() => toast.remove(), 500);
                 }, 3000);
             }
+
+            // ✅ 4. Tạo component bài viết
+            function createArticleElement(article) {
+                const articleElement = document.createElement("div");
+                articleElement.className = "col-md-5";
+                articleElement.dataset.id = article.newsId;
+
+                articleElement.innerHTML = `
+            <div class="news-item card mb-3 article-card"
+                 style="cursor: pointer;"
+                 data-id="${article.newsId}"
+                 data-title="${article.newsTitle}"
+                 data-category="${article.categoryName}"
+                 data-content="${article.newsContent}"
+                 data-tags="${article.tags?.join(';')}">
+                
+                <div class="card-body">
+                    <h4 class="card-title">${article.newsTitle}</h4>
+                    <p class="card-text">${article.headline}</p>
+                    <small class="text-muted">🕒 ${article.createdAt}</small>
+
+                    <p class="card-text">
+                        <strong>Category:</strong> ${article.categoryName ?? "N/A"}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">Article ID: ${article.newsId}</small>
+                    </p>
+                    <p class="card-text">
+                        <strong>Status:</strong>
+                        ${article.newsStatus
+                    ? `<span class="badge bg-success">Open</span>`
+                    : `<span class="badge bg-danger">Close</span>`}
+                    </p>
+                </div>
+            </div>
+        `;
+                return articleElement;
+            }
+
+            // ✅ 5. Thêm bài viết mới vào danh sách
+            function addArticleToList(article) {
+                const newsList = document.querySelector("#news-list .row");
+                if (!newsList) {
+                    console.error("❌ Không tìm thấy #news-list .row, kiểm tra lại HTML!");
+                    return;
+                }
+
+                const articleElement = createArticleElement(article);
+                newsList.prepend(articleElement);
+            }
+
+            // ✅ 6. Cập nhật bài viết trong danh sách
+            function updateArticleInList(article) {
+                const articleElement = document.querySelector(`[data-id="${article.newsId}"]`);
+                if (!articleElement) return;
+
+                articleElement.querySelector(".card-title").textContent = article.newsTitle;
+                articleElement.querySelector(".card-text").textContent = article.headline;
+            }
+
+            // ✅ 7. Xóa bài viết khỏi danh sách
+            function removeArticleFromList(newsId) {
+                const articleElement = document.querySelector(`[data-id="${newsId}"]`);
+                if (articleElement) {
+                    articleElement.remove();
+                }
+            }
         });
+
     </script>
 
 }
