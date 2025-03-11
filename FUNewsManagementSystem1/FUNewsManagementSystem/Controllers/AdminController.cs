@@ -2,7 +2,6 @@
 using DataAccessObject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace FUNewsManagementSystem.Controllers
 {
@@ -62,11 +61,26 @@ namespace FUNewsManagementSystem.Controllers
             return Ok("User updated successfully.");
         }
         
-        [HttpGet]
-        public IActionResult GetNewsByDateRange(DateTime startDate, DateTime endDate)
+        public IActionResult Report()
         {
-            var news = _newsService.GetNewsReportByDateRange(startDate, endDate);
-            return Ok(news);
+            return View(new List<NewsArticle>()); // Trả về danh sách rỗng để tránh lỗi
         }
+
+        
+        [HttpGet]
+        public IActionResult GetNewsByDateRange(DateTime? startDate, DateTime? endDate)
+        {
+            DateTime minDate = new DateTime(1753, 1, 1);
+            DateTime maxDate = DateTime.Now;
+
+            if (startDate == null || startDate < minDate) startDate = DateTime.Today.AddDays(-30);
+            if (endDate == null || endDate > maxDate) endDate = maxDate;
+
+            var news = _newsService.GetNewsReportByDateRange(startDate.Value, endDate.Value) ?? new List<NewsArticle>();
+
+            return View("Report", news);
+        }
+
+
     }
 }

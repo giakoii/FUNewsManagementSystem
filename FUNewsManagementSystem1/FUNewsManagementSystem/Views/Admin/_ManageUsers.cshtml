@@ -31,7 +31,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Password</th>
+
             <th>Role</th>
             <th>Actions</th>
           </tr>
@@ -40,10 +40,9 @@
             <td>@user.AccountId</td>
             <td>@user.AccountName</td>
             <td>@user.AccountEmail</td>
-            <td>@user.AccountPassword</td>
             <td>@(user.AccountRole == 1 ? "Staff" : "Lecturer")</td>
             <td>
-              <button class="btn btn-sm btn-primary editUserBtn" data-id="@user.AccountId" data-name="@user.AccountName" data-email="@user.AccountEmail" data-password="@user.AccountPassword" data-role="@user.AccountRole">
+              <button class="btn btn-sm btn-primary editUserBtn" data-id="@user.AccountId" data-name="@user.AccountName" data-email="@user.AccountEmail"  data-role="@user.AccountRole">
                 <i class="bi bi-pencil-square"></i> Edit </button>
               <button class="btn btn-sm btn-danger deleteUserBtn" data-id="@user.AccountId">
                 <i class="bi bi-trash"></i> Delete </button>
@@ -156,7 +155,6 @@
             AccountId: id,
             AccountName: name,
             AccountEmail: email,
-            AccountPassword: password,
             AccountRole: parseInt(role)
           }),
           success: function() {
