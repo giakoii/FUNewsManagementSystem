@@ -1,4 +1,5 @@
-﻿using DataAccessObject.Models;
+﻿using BusinessLogic.DTOs;
+using DataAccessObject.Models;
 
 namespace BusinessObject.Service
 {
@@ -6,9 +7,11 @@ namespace BusinessObject.Service
     {
         bool AddNewsArticle(NewsArticle newsArticle);
         
+        List<NewsArticleDto> GetNewsArticles();
+        
         bool DeleteNewsArticle(string id);
 
         void UpdateNewsArticle(NewsArticle newsArticle);
-        List<NewsArticle> GetNewsReportByDateRange(DateTime startDate, DateTime endDate);
+        List<NewsArticleDto> GetNewsReportByDateRange(DateTime startDate, DateTime endDate);
     }
 }

@@ -1,8 +1,10 @@
-﻿using DataAccessObject.Models;
+﻿using BusinessLogic.DTOs;
+using BusinessObject.Service;
+using DataAccessObject.Models;
 
-namespace BusinessObject.Service
+namespace BusinessLogic.Service;
+
+public interface ITagService : IBaseService<Tag, int>
 {
-    public interface ITagService : IBaseService<Tag, int>
-    {
-    }
+    List<TagDto> GetTags();
 }

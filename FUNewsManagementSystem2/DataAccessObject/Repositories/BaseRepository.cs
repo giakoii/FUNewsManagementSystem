@@ -79,7 +79,7 @@ public class BaseRepository<Entity, Type> : IRepository<Entity, Type> where Enti
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Entity GetById(Type id)
+    public Entity? GetById(Type id)
     {
         return DbSet.Find(id);
     }

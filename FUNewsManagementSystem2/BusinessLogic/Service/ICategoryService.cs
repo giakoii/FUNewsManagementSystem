@@ -1,10 +1,11 @@
-﻿using DataAccessObject.Models;
+﻿using BusinessLogic.DTOs;
+using DataAccessObject.Models;
 
 namespace BusinessObject.Service
 {
     public interface ICategoryService : IBaseService<Category, short>
     {
-        List<Category> GetBy();
+        List<CategoryDto> GetBy();
         bool AddCategory(Category category);
         
         void UpdateCategory(Category category);
@@ -13,6 +14,6 @@ namespace BusinessObject.Service
         
         bool IsCategoryInUse(short categoryId);
         
-        IEnumerable<Category> GetAllSubCategory(short categoryId);
+        List<CategoryDto> GetAllSubCategory(short categoryId);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FUNewsManagementSystem.Models.ViewModel
+namespace FUNewsManagementSystem2.ViewModel
 {
-    public class LoginRequest
+    public class LoginViewModel
     {
         [Required(ErrorMessage = "Please enter your email")]
         [EmailAddress(ErrorMessage = "Invalid email format")]

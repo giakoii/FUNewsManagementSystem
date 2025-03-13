@@ -51,6 +51,7 @@ public class Login : PageModel
 
         // Login
         var user = await _systemAccountService.LoginAsync(LoginRequest.Email, LoginRequest.Password) ??
+                   
                    await _systemAccountService.LoginAdmin(LoginRequest.Email, LoginRequest.Password);
 
         // Check if user is null

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessLogic.DTOs;
 
 namespace BusinessObject.Service
 {
@@ -15,7 +16,7 @@ namespace BusinessObject.Service
         
         void UpdateUser(SystemAccount user);
         
-        Task<List<SystemAccount>> GetSystemAccountsAsync();
+        Task<List<SystemAccountDto>> GetSystemAccountsAsync();
         
         Task UpdateSystemAccountAsync(SystemAccount account);
         
@@ -23,8 +24,8 @@ namespace BusinessObject.Service
         
         Task<bool> CreateSystemAccountAsync(SystemAccount account);
         
-        public List<ViewUserNewsHistory> GetNewsHistory(short id);
+        public List<VwUserNewsHistoryDto> GetNewsHistory(short id);
 
-        public SystemAccount GetAccountByEmail(string email);
+        public SystemAccountDto GetAccountByEmail(string email);
     }
 }

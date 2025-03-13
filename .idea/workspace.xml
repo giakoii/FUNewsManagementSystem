@@ -2,146 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dedc5d8c-72a9-48c6-abbc-982077ccd29f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/FUNewsManagementSystem1/.idea/.idea.FUNewsManagementSystem/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FUNewsManagementSystem1/.idea/.idea.FUNewsManagementSystem/.idea/indexLayout.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/.idea/.idea.FUNewsManagementSystem2/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/BusinessObject.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Enum/EnumRole.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/BaseService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/CategoryService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/IBaseService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/ICategoryService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/INewArticleService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/ISystemAccountService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/ITagService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/NewArticleService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/SystemAccountService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusinessObject/Service/TagService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/DataAccessObject.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/AdminAccount.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/Category.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/FUNewsManagementSystemContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/NewsArticle.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/SystemAccount.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/Tag.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Models/ViewUserNewsHistory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Program.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/BaseRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/CategoryRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/ICategoryRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/INewArticelRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/IRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/ISystemAccountRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/ITagRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/NewArticleRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/SystemAccountRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataAccessObject/Repositories/TagsRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem.sln" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Controllers/AdminController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Controllers/AuthenController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Controllers/CategoryController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Controllers/NewArticleController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Controllers/ProfileController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Controllers/UserController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/FUNewsManagementSystem.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ErrorViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/AddCategoryVM.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/AddNewArticleRequest.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/CategoryModelViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/CategoryViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/CreateNewsArticleVM.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/EditNewsArticleVM.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/IndexPageVM.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/LoginRequest.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/NewsArticleHistoryViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/UpdateCategoryViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/UserProfileViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Models/ViewModel/UserProfileWithNewsHistoryViewModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Program.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Properties/launchSettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Utils/Messages.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Utils/StringUtil.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Admin/Dashboard.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Admin/Report.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Admin/Report.cshtml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Admin/_ManageUsers.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Authen/Index.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Authen/Index.cshtml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Category/Index.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Home/Index.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Home/Privacy.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/NewArticle/Index.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Shared/Error.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Shared/_Layout.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Shared/_Layout.cshtml.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/Shared/_ValidationScriptsPartial.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/User/Index.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/User/Index.cshtml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/_ViewImports.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/Views/_ViewStart.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/appsettings.Development.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/appsettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/css/site.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/js/site.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation/LICENSE.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation/dist/additional-methods.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation/dist/additional-methods.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation/dist/jquery.validate.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery-validation/dist/jquery.validate.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery/dist/jquery.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery/dist/jquery.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem/wwwroot/lib/jquery/dist/jquery.min.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/global.json" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/ViewModel/SystemAccountViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/Dashboard.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/Dashboard.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/Dashboard.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/Dashboard.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/ManageUsers.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/ManageUsers.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/ManageUsers.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/ManageUsers.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Auth/Login.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Auth/Login.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/ViewModel/LoginRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/ViewModel/LoginViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,9 +23,9 @@
     <setting file="file://$PROJECT_DIR$/FUNewsManagementSystem2/DataAccessObject/Repositories/BaseRepository.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/FUNewsManagementSystem2/FUNewsManagementSystem2/Pages/Admin/Dashboard.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2u8R7MH5YwiOVH4ki3yrf5AmnEi" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -167,7 +35,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "config__lab1+lab2",
     "last_opened_file_path": "/Users/giakhoi/CodeProject/CSharpProjects/FUNewsManagementSystem",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"

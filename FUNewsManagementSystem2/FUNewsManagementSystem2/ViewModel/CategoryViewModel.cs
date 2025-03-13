@@ -4,6 +4,12 @@ namespace FUNewsManagementSystem.Models.ViewModel;
 
 public class CategoryViewModel
 {
-    public List<CategoryModelViewModel> Categories { get; set; }
-    public UpdateCategoryViewModel UpdateCategory { get; set; }
+    public short CategoryId { get; set; }
+    public string CategoryName { get; set; }
+    public string CategoryDescription { get; set; }
+    public bool? IsActive { get; set; }
+    
+    public short? ParentCategoryId { get; set; }
+    
+    public List<CategoryModelViewModel>? SubCategories { get; set; }
 }

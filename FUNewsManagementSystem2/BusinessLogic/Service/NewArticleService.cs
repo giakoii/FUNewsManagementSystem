@@ -1,4 +1,7 @@
-﻿using DataAccessObject.Models;
+﻿using AutoMapper;
+using BusinessLogic.DTOs;
+using BusinessLogic.Service;
+using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 
 namespace BusinessObject.Service
@@ -8,6 +11,7 @@ namespace BusinessObject.Service
     /// </summary>
     public class NewArticleService : BaseService<NewsArticle, string>, INewArticleService
     {
+        private readonly IMapper _mapper;
         private readonly ITagService _tagService;
         private readonly INewArticelRepository _newsArticleRepository;
 
@@ -16,10 +20,13 @@ namespace BusinessObject.Service
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="tagService"></param>
-        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService, INewArticelRepository newArticelRepository) : base(repository)
+        /// <param name="newArticelRepository"></param>
+        /// <param name="mapper"></param>
+        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService, INewArticelRepository newArticelRepository, IMapper mapper) : base(repository)
         {
             _tagService = tagService;
             _newsArticleRepository = newArticelRepository;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -33,6 +40,23 @@ namespace BusinessObject.Service
             newsArticle.NewsStatus = true;
             Repository.Add(newsArticle);
             return true;
+        }
+
+        public List<NewsArticleDto> GetNewsArticles()
+        {
+            var articles = Repository.GetBy(x => x.NewsStatus == true, 
+                false, a => a.Tags
+            ).ToList();
+            foreach (var newsArticle in articles)
+            {
+                Console.WriteLine(newsArticle.NewsArticleId);
+                foreach (var articleTag in newsArticle.Tags)
+                {
+                    Console.WriteLine(articleTag.TagName);
+                }
+                Console.WriteLine("---------");
+            }
+            return _mapper.Map<List<NewsArticleDto>>(articles);
         }
 
         /// <summary>
@@ -86,10 +110,10 @@ namespace BusinessObject.Service
             }
         }
 
-        public List<NewsArticle> GetNewsReportByDateRange(DateTime startDate, DateTime endDate)
+        public List<NewsArticleDto> GetNewsReportByDateRange(DateTime startDate, DateTime endDate)
         {
-            return _newsArticleRepository.GetNewsByDateRange(startDate, endDate).ToList();
-
+            var articles = Repository.GetBy(x => x.CreatedDate >= startDate && x.CreatedDate <= endDate, true, a => a.Tags).ToList();
+            return _mapper.Map<List<NewsArticleDto>>(articles);
         }
     }
 }

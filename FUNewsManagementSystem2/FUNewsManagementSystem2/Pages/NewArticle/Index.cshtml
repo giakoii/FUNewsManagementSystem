@@ -1,103 +1,498 @@
 @page
 @model FUNewsManagementSystem2.Pages.NewArticle.Index
-
 @{
-    ViewData["Title"] = "List Of News Articles";
+    ViewData["Title"] = "List News Article";
 }
 
 <h1>@ViewData["Title"]</h1>
 
 <!-- Form Search -->
-<form method="get" asp-page="./Index" class="mb-3">
-    <div class="input-group">
-        <input type="text"
-               name="SearchTerm"
-               class="form-control"
-               placeholder="Search..."
-               value="@Model.SearchTerm"/>
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-</form>
+@* <form method="get"> *@
+@*     <div class="input-group mb-3"> *@
+@*         <span class="input-group-text"><i class="bi bi-search"></i></span> *@
+@*         <input type="text" name="searchTerm" class="form-control" placeholder="Search..." value="@Model.SearchTerm"/> *@
+@*         <button type="submit" class="btn btn-primary">Search</button> *@
+@*     </div> *@
+@* </form> *@
 
-<!-- Add New Article -->
-@if (User.IsInRole("Staff"))
+<!-- Sort Form -->
+@* <form method="get" class="mb-3 d-flex"> *@
+@*     <select name="sortBy" class="form-select me-2"> *@
+@*         <option value="Title" selected="@(Model.SortBy == "Title" ? "selected" : null)">Title</option> *@
+@*         <option value="Id" selected="@(Model.SortBy == "Id" ? "selected" : null)">ID</option> *@
+@*         <option value="Date" selected="@(Model.SortBy == "Date" ? "selected" : null)">Date</option> *@
+@*     </select> *@
+@* *@
+@*     <select name="sortOrder" class="form-select me-2"> *@
+@*         <option value="asc" selected="@(Model.SortOrder == "asc" ? "selected" : null)">Ascending</option> *@
+@*         <option value="desc" selected="@(Model.SortOrder == "desc" ? "selected" : null)">Descending</option> *@
+@*     </select> *@
+@* *@
+@*     <button type="submit" class="btn btn-primary">Sort</button> *@
+@* </form> *@
+
+<!-- Toast Messages -->
+@if (TempData["ToastMessage"] != null)
 {
-    <a asp-page="Add" class="btn btn-primary mb-3">Add New Article</a>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast text-bg-@(TempData["ToastType"] ?? "info") border-0 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">@TempData["ToastMessage"]</div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
 }
 
-<!-- Articles List -->
-<div class="row">
-    @foreach (var article in Model.Articles)
-    {
-        <div class="col-md-4">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">@article.NewsTitle</h5>
-                    <p><strong>Category:</strong> @article.CategoryName</p>
-                    <p><strong>Tags:</strong> @string.Join(", ", article.TagNames)</p>
-                    <p><strong>Status:</strong>
-                        <span class="badge bg-@(article.NewsStatus ?? false ? "success" : "danger")">
-                            @(article.NewsStatus ?? false ? "Open" : "Closed")
-                        </span>
-                    </p>
-                    <a asp-page="Edit" asp-route-id="@article.NewsArticleId" class="btn btn-warning btn-sm">Edit</a>
+@if (User.IsInRole("Staff"))
+{
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">Add New Article</button>
+    <a asp-page="/Categories/Index" class="btn btn-secondary">Manage Categories</a>
+}
+
+<!-- Card Layout -->
+@if (User.IsInRole("Staff"))
+{
+    <!-- Giao diện dành cho Staff (dạng bảng) -->
+    <div id="tableLayout">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Category</th>
+                    <th>Tags</th>
+                    <th>Created Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var article in Model.Articles)
+                {
+                    <tr>
+                        <td>@article.NewsArticleId</td>
+                        <td>@article.NewsTitle</td>
+                        <td>@article.NewsContent</td>
+                        <td>@article?.CategoryName</td>
+                        <td>@(article?.TagNames != null && article.TagNames.Any() ? string.Join(";", article.TagNames) : "No Tags")</td>
+                        <td>@article.CreatedDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@(article.NewsStatus ?? false ? "🟢 Open" : "🔴 Close")</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm edit-article-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#updateArticleModal"
+                                    data-id="@article.NewsArticleId"
+                                    data-title="@article.NewsTitle"
+                                    data-content="@article.NewsContent"
+                                    data-category="@article?.CategoryId"
+                                    data-tags="@(article.TagNames != null && article.TagNames.Any() ? string.Join(";", article.TagNames) : "")"
+                                    data-status="@article.NewsStatus">
+                                Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-article-btn"
+                                    data-id="@article.NewsArticleId"
+                                    data-title="@article.NewsTitle"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteArticleModal">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div id="news-list">
+        <div class="row">
+            <div class="col-md-5" id="divContainer">
+                @foreach (var article in Model.Articles)
+                {
+                    <div class="card mb-3 article-card" style="cursor: pointer;"
+                         data-id="@article.NewsArticleId"
+                         data-title="@article.NewsTitle"
+                         data-category="@article?.CategoryName"
+                         data-content="@article?.NewsContent"
+                         data-tags="@(article.TagNames != null && article.TagNames.Any() ? string.Join(";", article.TagNames) : "")">
+                        <div class="card-body">
+                            <h4 class="card-title">@article?.NewsTitle</h4>
+                            <p class="card-text">@article?.Headline</p>
+                            <small class="text-muted">🕒 @article?.CreatedDate</small>
+
+                            <p><strong>Category:</strong> @article?.CategoryName</p>
+                            <p><strong>Status:</strong> @(article?.NewsStatus ?? false ? "🟢 Open" : "🔴 Close")</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-md-7">
+                <div id="articleDetail" class="border p-3">
+                    <h4 id="detailTitle" class="mb-3">[No posts selected yet]</h4>
+                    <p><strong>Category:</strong> <span id="detailCategory"></span></p>
+                    <p><strong>Content:</strong> <span id="detailContent"></span></p>
+                    <p><strong>Tags:</strong> <span id="detailTags"></span></p>
                 </div>
             </div>
         </div>
-    }
+    </div>
+}
+
+<div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="AddArticle">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addArticleModalLabel">Add New Article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" asp-for="NewArticle.NewsTitle" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Headline</label>
+                        <input type="text" class="form-control" asp-for="NewArticle.Headline" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">News Source</label>
+                        <input type="text" class="form-control" asp-for="NewArticle.NewsSource" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea class="form-control" asp-for="NewArticle.NewsContent" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" asp-for="NewArticle.CategoryId" required>
+                            <option value="">-- Select Category --</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tags</label>
+                        <div>
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="tag_@tag.TagId" name="SelectedTags" value="@tag.TagId" />
+                                    <label class="form-check-label" for="tag_@tag.TagId">@tag.TagName</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Khởi tạo kết nối SignalR
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/newshub") // URL của Hub (trùng với MapHub trong server)
-            .withAutomaticReconnect([0, 2000, 5000, 10000]) // Tự động reconnect
-            .configureLogging(signalR.LogLevel.Information) // Log thông tin
-            .build();
+<div class="modal fade" id="editArticleModal" tabindex="-1" aria-labelledby="editArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="EditArticle">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editArticleModalLabel">Edit Article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="NewArticle.NewsArticleId" id="editNewsId" />
 
-        connection.on("ReceiveNewsUpdate", function (message) {
-            showToast(message);
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" asp-for="NewArticle.NewsTitle" id="editNewsTitle" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea class="form-control" asp-for="NewArticle.NewsContent" id="editNewsContent" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" asp-for="NewArticle.CategoryId" id="editCategory" required>
+                            <option value="">-- Select Category --</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tags</label>
+                        <div>
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="editTag_@tag.TagId" name="SelectedTags" value="@tag.TagId" />
+                                    <label class="form-check-label" for="editTag_@tag.TagId">@tag.TagName</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" asp-for="NewArticle.NewsStatus" id="editNewsStatus" required>
+                            <option value="true">Open</option>
+                            <option value="false">Close</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css"
+      rel="stylesheet">
+<script
+    src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".edit-article-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    // Lấy dữ liệu từ các data-* attribute
+                    let id = this.getAttribute("data-id");
+                    let title = this.getAttribute("data-title");
+                    let content = this.getAttribute("data-content");
+                    let category = this.getAttribute("data-category");
+                    let tags = this.getAttribute("data-tags");
+                    let status = this.getAttribute("data-status");
+
+                    // Điền dữ liệu vào modal chỉnh sửa
+                    document.getElementById("editNewsId").value = id;
+                    document.getElementById("editNewsTitle").value = title;
+                    document.getElementById("editNewsContent").value = content;
+                    document.getElementById("editCategory").value = category;
+                    document.getElementById("editNewsStatus").value = (status && status.toString().toLowerCase() === "true") ? "true" : "false";
+
+                    // Reset tất cả checkbox tag
+                    document.querySelectorAll("#editArticleModal input[name='SelectedTags']").forEach(tag => {
+                        tag.checked = false;
+                    });
+
+                    // Đánh dấu các tag đã chọn
+                    if (tags) {
+                        let tagArray = tags.split(",");
+                        tagArray.forEach(tagId => {
+                            let tagElement = document.getElementById("editTag_" + tagId.trim());
+                            if (tagElement) {
+                                tagElement.checked = true;
+                            }
+                        });
+                    }
+
+                    // Hiển thị modal
+                    let editModal = new bootstrap.Modal(document.getElementById("editArticleModal"));
+                    editModal.show();
+                });
+            });
+        });
+    </script>
+}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.article-card').forEach(card => {
+                card.addEventListener('click', function () {
+                    document.querySelectorAll('.article-card').forEach(c => c.classList.remove('border-primary'));
+                    this.classList.add('border-primary');
+
+                    document.getElementById("detailTitle").textContent = this.getAttribute("data-title");
+                    document.getElementById("detailCategory").textContent = this.getAttribute("data-category");
+                    document.getElementById("detailContent").textContent = this.getAttribute("data-content");
+
+                    let tagContainer = document.getElementById("detailTags");
+                    tagContainer.innerHTML = "";
+                    let tags = this.getAttribute("data-tags").split(";");
+                    tags.forEach(tag => {
+                        let span = document.createElement("span");
+                        span.className = "badge bg-info me-1";
+                        span.textContent = tag.trim();
+                        tagContainer.appendChild(span);
+                    });
+                });
+            });
+        });
+    </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Connect with SignalR
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/newshub")
+                .withAutomaticReconnect([0, 2000, 5000, 10000])
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            // Listen to ReceiveNewsUpdate event
+            connection.on("ReceiveNewsUpdate", function (article) {
+                console.log("📢 Received action:", article.actionType);
+
+                if (article.actionType === "Create") {
+                    showToast(`🆕 New article: ${article.newsTitle}`);
+                    addArticleToList(article);
+                } else if (article.actionType === "Update") {
+                    showToast(`✏️ Updated article: ${article.newsTitle}`);
+                    updateArticleInList(article);
+                } else if (article.actionType === "Delete") {
+                    showToast(`🗑️ Deleted article ID: ${article.newsId}`);
+                    removeArticleFromList(article.newsId);
+                }
+            });
+
+            // 
+            async function startConnection() {
+                try {
+                    await connection.start();
+                    console.log("✅ SignalR Connected!");
+                } catch (err) {
+                    console.error("❌ Connection failed. Retrying in 5s...", err);
+                    setTimeout(startConnection, 5000);
+                }
+            }
+
+            startConnection();
+
+            // ✅ 3. Hiển thị thông báo (Toast)
+            function showToast(message) {
+                const toastContainer = document.querySelector(".toast-container");
+                if (!toastContainer) return;
+
+                const toast = document.createElement("div");
+                toast.className = "toast align-items-center text-bg-info border-0 show";
+                toast.setAttribute("role", "alert");
+                toast.setAttribute("aria-live", "assertive");
+                toast.setAttribute("aria-atomic", "true");
+
+                toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+
+                toastContainer.appendChild(toast);
+
+                // 🕒 Tự động ẩn sau 3s
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000);
+            }
+
+            // ✅ 4. Tạo component bài viết
+                       function createArticleElement(article) {
+                    const container = document.getElementById("divContainer");
+            if (!container) return;
+
+            // Tạo chuỗi HTML
+            const cardHtml = `
+        <div class="news-item card mb-3 article-card"
+             style="cursor: pointer;"
+             data-id="${article.newsId ?? ""}"
+             data-title="${article.newsTitle ?? ""}"
+             data-category="${article.categoryName ?? ""}"
+             data-content="${article.newsContent ?? ""}"
+             data-tags="${(article.tags ?? []).join(";")}">
+
+            <div class="card-body">
+                <h4 class="card-title">${article.newsTitle ?? ""}</h4>
+                <p class="card-text">${article.headline ?? ""}</p>
+                <small class="text-muted">🕒 ${article.createdAt ?? ""}</small>
+
+                <p class="card-text">
+                    <strong>Category:</strong> ${article.categoryName ?? "N/A"}
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">Article ID: ${article.newsId ?? ""}</small>
+                </p>
+                <p class="card-text" id="statusText">
+                    <strong>Status:</strong>
+                    ${
+                        article.newsStatus
+                            ? '<span class="badge bg-success">Open</span>'
+                            : '<span class="badge bg-danger">Close</span>'
+                    }
+                </p>
+            </div>
+        </div>
+        `;
+            container.insertAdjacentHTML("afterbegin", cardHtml);
+            console.log("HTML", cardHtml);
+                }
+
+            // ✅ 5. Thêm bài viết mới vào danh sách
+            function addArticleToList(article) {
+                const newsList = document.querySelector("#news-list .row");
+                if (!newsList) {
+                    console.error("❌ Không tìm thấy #news-list .row, kiểm tra lại HTML!");
+                    return;
+                }
+                console.log("tags:", article.tags);
+                const articleElement = createArticleElement(article);
+            }
+
+            // ✅ 6. Cập nhật bài viết trong danh sách
+            function updateArticleInList(article) {
+                if (article.newsStatus) {
+                            console.log("Status", article.newsStatus);
+                          const articleElement = createArticleElement(article);
+                    } else {
+                        console.log("Removing card:", card);
+                        card.remove();
+                    }
+                const card = document.querySelector(`[data-id="${article.newsId}"]`);
+                if (!card) return;
+                const titleEl = card.querySelector(".card-title");
+                if (titleEl) titleEl.textContent = article.newsTitle ?? "";
+                const pText = card.querySelectorAll(".card-text");
+                const statusEl = document.getElementById("statusText");
+                const categoryEl = document.getElementById("categoryNew");
+                categoryEl.innerHTML = `<strong>Category:</strong> ${article.categoryName || "N/A"}`;
+                            console.log("Status", article.newsStatus);
+
+                    
+            }
+
+            // ✅ 7. Xóa bài viết khỏi danh sách
+            function removeArticleFromList(newsId) {
+                const articleElement = document.querySelector(`[data-id="${newsId}"]`);
+                if (articleElement) {
+                    articleElement.remove();
+                }
+            }
         });
 
-        async function startConnection() {
-            try {
-                await connection.start();
-                console.log("Connected to SignalR!");
-            } catch (err) {
-                console.error("Connection failed. Retrying in 5s...", err);
-                setTimeout(startConnection, 5000);
-            }
-        }
+    </script>
 
-        // Gọi hàm kết nối
-        startConnection();
-
-        // Hiển thị thông báo toast
-        function showToast(message) {
-            const toastContainer = document.querySelector(".toast-container");
-            if (!toastContainer) return;
-
-            const toast = document.createElement("div");
-            toast.className = "toast align-items-center text-bg-info border-0 show";
-            toast.setAttribute("role", "alert");
-            toast.setAttribute("aria-live", "assertive");
-            toast.setAttribute("aria-atomic", "true");
-
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">${message}</div>
-                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
-
-            toastContainer.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => toast.remove(), 500);
-            }, 5000);
-        }
-    });
-</script>
+}

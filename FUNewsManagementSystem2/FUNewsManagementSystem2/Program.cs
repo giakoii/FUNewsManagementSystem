@@ -1,7 +1,9 @@
+using BusinessLogic.Service;
 using BusinessObject.Service;
 using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 using FUNewsManagementSystem.Hubs;
+using FUNewsManagementSystem2.Mapping;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,8 @@ builder.Services.AddDbContext<FUNewsManagementSystemContext>(options =>
 
 // Cấu hình AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(AutoMapping), typeof(ViewModelMapping));
+
 
 // ✅ Sử dụng Razor Pages thay vì MVC
 builder.Services.AddRazorPages();

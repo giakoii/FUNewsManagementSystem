@@ -1,4 +1,6 @@
-﻿using DataAccessObject.Models;
+﻿using AutoMapper;
+using BusinessLogic.DTOs;
+using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 using Microsoft.Extensions.Configuration;
 
@@ -11,6 +13,7 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
 {
     private readonly ISystemAccountRepository _systemAccountRepository;
     private readonly IConfiguration _configuration;
+    private readonly IMapper _mapper;
 
     /// <summary>
     /// Constructor
@@ -18,10 +21,12 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
     /// <param name="repository"></param>
     /// <param name="configuration"></param>
     /// <param name="systemAccountRepository"></param>
-    public SystemAccountService(BaseRepository<SystemAccount, short> repository, IConfiguration configuration, ISystemAccountRepository systemAccountRepository) : base(repository)
+    /// <param name="mapper"></param>
+    public SystemAccountService(BaseRepository<SystemAccount, short> repository, IConfiguration configuration, ISystemAccountRepository systemAccountRepository, IMapper mapper) : base(repository)
     {
         _configuration = configuration;
         _systemAccountRepository = systemAccountRepository;
+        _mapper = mapper;
     }
     
     /// <summary>
@@ -61,11 +66,13 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
         return false;
     }
 
-    public Task<List<SystemAccount>> GetSystemAccountsAsync()
+    public async Task<List<SystemAccountDto>> GetSystemAccountsAsync()
     {
-        var accounts = Repository.GetByAsync().Result.ToList();
-        return Task.FromResult(accounts);
+        var accounts = await Repository.GetByAsync();
+    
+        return _mapper.Map<List<SystemAccountDto>>(accounts.ToList());
     }
+
 
     /// <summary>
     /// Update system account
@@ -165,13 +172,14 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public List<ViewUserNewsHistory> GetNewsHistory(short id)
+    public List<VwUserNewsHistoryDto> GetNewsHistory(short id)
     {
-        return _systemAccountRepository.GetNewsHistory(id);
+        var newsHistory = _systemAccountRepository.GetNewsHistory(id);
+        return _mapper.Map<List<VwUserNewsHistoryDto>>(newsHistory);
     }
 
-    public SystemAccount GetAccountByEmail(string email)
+    public SystemAccountDto GetAccountByEmail(string email)
     {
-        return _systemAccountRepository.GetAccountByEmail(email);
+        return  _mapper.Map<SystemAccountDto>(_systemAccountRepository.GetAccountByEmail(email));
     }
 }
