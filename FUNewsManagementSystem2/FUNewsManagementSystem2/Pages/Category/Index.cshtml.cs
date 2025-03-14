@@ -1,5 +1,4 @@
 using AutoMapper;
-using BusinessLogic.DTOs;
 using BusinessObject.Enum;
 using BusinessObject.Service;
 using FUNewsManagementSystem.Models.ViewModel;
@@ -67,13 +66,13 @@ public class Index : PageModel
 
         TempData["ToastMessage"] = "Add New Category successfully!";
         TempData["ToastType"] = "success";
-        
+
         var categories = _categoryService.GetBy();
         Categories = _mapper.Map<List<CategoryViewModel>>(categories);
 
         return RedirectToPage();
     }
-    
+
     public IActionResult OnPostUpdateCategory()
     {
         if (!ModelState.IsValid)
@@ -86,13 +85,13 @@ public class Index : PageModel
         {
             return Page();
         }
-        
+
         category.CategoryName = CategoryView.CategoryName;
         category.CategoryDesciption = CategoryView.CategoryDescription;
         category.IsActive = CategoryView.IsActive;
         category.ParentCategoryId = CategoryView.ParentCategoryId;
         _categoryService.UpdateCategory(category);
-        
+
         TempData["ToastMessage"] = "Category updated successfully!";
         TempData["ToastType"] = "success";
 

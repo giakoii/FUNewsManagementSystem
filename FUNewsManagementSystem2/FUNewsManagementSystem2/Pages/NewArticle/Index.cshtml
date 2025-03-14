@@ -76,7 +76,11 @@
                         <td>@article.NewsTitle</td>
                         <td>@article.NewsContent</td>
                         <td>@article?.CategoryName</td>
-                        <td>@(article?.TagNames != null && article.TagNames.Any() ? string.Join(";", article.TagNames) : "No Tags")</td>
+                        <td>
+                            @(article?.TagNames != null && article.TagNames.Any()
+                                ? string.Join(";", article.TagNames)
+                                : "No Tags")
+                        </td>
                         <td>@article.CreatedDate?.ToString("dd/MM/yyyy")</td>
                         <td>@(article.NewsStatus ?? false ? "🟢 Open" : "🔴 Close")</td>
                         <td>
