@@ -38,9 +38,9 @@
         <tr>
             <td>@category.CategoryId</td>
             <td>@category.CategoryName</td>
-            <td>@Html.Raw(category.CategoryDescription)</td> 
+            <td>@category.CategoryDesciption</td> 
             <script>
-                console.log("@category.CategoryDescription");
+                console.log("@category.CategoryDesciption");
             </script>
             <td>
                     <span class="badge bg-@(category.IsActive ?? false ? "success" : "danger")">
@@ -52,7 +52,7 @@
                 <button class="btn btn-warning btn-sm btnEditCategory"
                         data-id="@category.CategoryId"
                         data-name="@category.CategoryName"
-                        data-description="@category.CategoryDescription"
+                        data-description="@category.CategoryDesciption"
                         data-status="@(category.IsActive?.ToString().ToLower())"
                         data-parent-id="@category.ParentCategoryId">
                     Edit
@@ -87,7 +87,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control" asp-for="CategoryView.CategoryDescription"></textarea>
+                        <textarea class="form-control" asp-for="CategoryView.CategoryDesciption"></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -122,7 +122,7 @@
 
                     <div class="mb-3">
                         <label for="editCategoryDescription" class="form-label">Description</label>
-                        <textarea class="form-control" asp-for="CategoryView.CategoryDescription" id="editCategoryDescription" required></textarea>
+                        <textarea class="form-control" asp-for="CategoryView.CategoryDesciption" id="editCategoryDescription" required></textarea>
                     </div>
 
                     <div class="mb-3">

@@ -1,12 +1,12 @@
-using DataAccessObject.Models;
+using FUNewsManagementSystem.Models.ViewModel;
 
-namespace FUNewsManagementSystem.Models.ViewModel;
+namespace FUNewsManagementSystem2.ViewModel;
 
 public class CategoryViewModel
 {
     public short CategoryId { get; set; }
     public string CategoryName { get; set; }
-    public string CategoryDescription { get; set; }
+    public string CategoryDesciption { get; set; }
     public bool? IsActive { get; set; }
     
     public short? ParentCategoryId { get; set; }

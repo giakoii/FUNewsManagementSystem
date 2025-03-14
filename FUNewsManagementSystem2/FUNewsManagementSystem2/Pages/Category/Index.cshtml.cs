@@ -2,6 +2,7 @@ using AutoMapper;
 using BusinessObject.Enum;
 using BusinessObject.Service;
 using FUNewsManagementSystem.Models.ViewModel;
+using FUNewsManagementSystem2.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -37,7 +38,15 @@ public class Index : PageModel
     public void OnGet()
     {
         var categories = _categoryService.GetBy();
+        foreach (var categoryDto in categories)
+        {
+            Console.WriteLine($"Category CategoryDescription {categoryDto.CategoryDesciption}");
+        }
         Categories = _mapper.Map<List<CategoryViewModel>>(categories);
+        foreach (var categoryDto in Categories)
+        {
+            Console.WriteLine($"Category CategoryDescription {categoryDto.CategoryDesciption}");
+        }
     }
 
     /// <summary>
@@ -57,7 +66,7 @@ public class Index : PageModel
         var newCategory = new DataAccessObject.Models.Category
         {
             CategoryName = CategoryView.CategoryName,
-            CategoryDesciption = CategoryView.CategoryDescription,
+            CategoryDesciption = CategoryView.CategoryDesciption,
             IsActive = true,
             ParentCategoryId = parentCategoryId,
         };
@@ -87,7 +96,7 @@ public class Index : PageModel
         }
 
         category.CategoryName = CategoryView.CategoryName;
-        category.CategoryDesciption = CategoryView.CategoryDescription;
+        category.CategoryDesciption = CategoryView.CategoryDesciption;
         category.IsActive = CategoryView.IsActive;
         category.ParentCategoryId = CategoryView.ParentCategoryId;
         _categoryService.UpdateCategory(category);

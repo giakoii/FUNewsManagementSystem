@@ -3,8 +3,12 @@ namespace BusinessLogic.DTOs;
 public class CategoryDto
 {
     public short CategoryId { get; set; }
-    public string CategoryName { get; set; }
-    public string CategoryDescription { get; set; }
+
+    public string CategoryName { get; set; } = null!;
+
+    public string CategoryDesciption { get; set; } = null!;
+
     public short? ParentCategoryId { get; set; }
+
     public bool? IsActive { get; set; }
 }
