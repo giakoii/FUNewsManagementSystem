@@ -6,8 +6,7 @@ public interface ISystemAccountRepository : IRepository<SystemAccount, short>
 {
     public SystemAccount GetAccountByEmail(string email);
     
-    List<ViewUserNewsHistory> GetNewsHistory(short id);
+    List<ViewUserNewsHistory> GetNewsHistoriesByAccountId(short id);
 
     public bool DeleteAccount(short id);
-    
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FUNewsManagementSystem2.Pages.Auth;
@@ -12,9 +13,9 @@ public class Logout : PageModel
     /// <summary>
     /// Logout action
     /// </summary>
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnPostAsync()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        Response.Redirect("/Auth/Login");
+        return RedirectToPage("/Auth/Login");
     }
 }

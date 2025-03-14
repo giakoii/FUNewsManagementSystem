@@ -38,13 +38,13 @@ public class SystemAccountRepository : BaseRepository<SystemAccount, short>, ISy
         _context.SaveChanges();
         return true;
     }
-
+    
     /// <summary>
     /// Get news history create News Actice of user
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public List<ViewUserNewsHistory> GetNewsHistory(short id)
+    public List<ViewUserNewsHistory> GetNewsHistoriesByAccountId(short id)
     {
         var result = _context.ViewUserNewsHistories.
             AsNoTracking()

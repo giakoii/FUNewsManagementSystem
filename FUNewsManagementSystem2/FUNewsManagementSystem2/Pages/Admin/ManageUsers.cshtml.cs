@@ -1,5 +1,6 @@
 using AutoMapper;
 using BusinessLogic.DTOs;
+using BusinessLogic.Service;
 using BusinessObject.Enum;
 using BusinessObject.Service;
 using DataAccessObject.Models;

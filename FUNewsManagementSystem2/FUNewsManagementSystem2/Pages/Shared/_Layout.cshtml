@@ -39,12 +39,11 @@
                         </li>
                     }
                     <li class="nav-item ms-auto">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity?.IsAuthenticated ?? false)
                         {
-                            <!-- Hiển thị tên người dùng và nút Logout -->
                             <div class="d-flex align-items-center">
                                 <span class="text-white me-3">Hello, @User.Identity.Name!</span>
-                                <form method="post" asp-page="/Auth/Logout" asp-page-handler="Logout" class="mb-0">
+                                <form method="post" asp-page="/Auth/Logout" class="mb-0">
                                     <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
                                 </form>
                             </div>

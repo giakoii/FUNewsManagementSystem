@@ -1,12 +1,8 @@
-﻿using DataAccessObject.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessLogic.DTOs;
+﻿using BusinessLogic.DTOs;
+using BusinessObject.Service;
+using DataAccessObject.Models;
 
-namespace BusinessObject.Service
+namespace BusinessLogic.Service
 {
     public interface ISystemAccountService : IBaseService<SystemAccount, short>
     {
@@ -24,8 +20,10 @@ namespace BusinessObject.Service
         
         Task<bool> CreateSystemAccountAsync(SystemAccount account);
         
-        public List<VwUserNewsHistoryDto> GetNewsHistory(short id);
+        List<VwUserNewsHistoryDto> GetNewsHistory(short id);
 
-        public SystemAccountDto GetAccountByEmail(string email);
+        SystemAccountDto GetAccountByEmail(string email);
+
+        List<VwUserNewsHistoryDto> GetNewsHistoryByAccountId(short id);
     }
 }

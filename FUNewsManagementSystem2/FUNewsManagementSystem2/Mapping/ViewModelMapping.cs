@@ -30,5 +30,19 @@ public class ViewModelMapping : Profile
         CreateMap<NewsArticleViewModel, NewsArticle>();
 
         CreateMap<TagViewModel, Tag>();
+
+        CreateMap<UserProfileViewModel, SystemAccount>();
+        
+        CreateMap<SystemAccount, UserProfileViewModel>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountName))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.AccountEmail));
+
+        CreateMap<NewsArticleHistoryViewModel, VwUserNewsHistoryDto>();
+        
+        CreateMap<VwUserNewsHistoryDto, NewsArticleHistoryViewModel>();
+        
+        CreateMap<ViewUserNewsHistory, VwUserNewsHistoryDto>();
+        CreateMap<VwUserNewsHistoryDto, ViewUserNewsHistory>();
+        
     }
 }

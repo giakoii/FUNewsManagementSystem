@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.DTOs;
+using BusinessLogic.Service;
 using DataAccessObject.Models;
 using DataAccessObject.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -174,12 +175,19 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
     /// <returns></returns>
     public List<VwUserNewsHistoryDto> GetNewsHistory(short id)
     {
-        var newsHistory = _systemAccountRepository.GetNewsHistory(id);
+        var newsHistory = _systemAccountRepository.GetNewsHistoriesByAccountId(id);
         return _mapper.Map<List<VwUserNewsHistoryDto>>(newsHistory);
     }
 
     public SystemAccountDto GetAccountByEmail(string email)
     {
         return  _mapper.Map<SystemAccountDto>(_systemAccountRepository.GetAccountByEmail(email));
+    }
+
+    public List<VwUserNewsHistoryDto> GetNewsHistoryByAccountId(short id)
+    {
+        var newsHistory = _systemAccountRepository.GetNewsHistoriesByAccountId(id);
+        
+        return _mapper.Map<List<VwUserNewsHistoryDto>>(newsHistory);
     }
 }
