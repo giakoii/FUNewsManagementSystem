@@ -6,30 +6,31 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<!-- Form Search -->
-@* <form method="get"> *@
-@*     <div class="input-group mb-3"> *@
-@*         <span class="input-group-text"><i class="bi bi-search"></i></span> *@
-@*         <input type="text" name="searchTerm" class="form-control" placeholder="Search..." value="@Model.SearchTerm"/> *@
-@*         <button type="submit" class="btn btn-primary">Search</button> *@
-@*     </div> *@
-@* </form> *@
+<form method="get">
+    <!-- Nhóm Search -->
+    <div class="mb-3 animate__animated animate__bounceInRight">
+        <label for="searchTerm" class="form-label">Search</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="searchTerm" name="SearchTerm" class="form-control"
+                   placeholder="Search..." value="@Model.SearchTerm" />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
 
-<!-- Sort Form -->
-@* <form method="get" class="mb-3 d-flex"> *@
-@*     <select name="sortBy" class="form-select me-2"> *@
-@*         <option value="Title" selected="@(Model.SortBy == "Title" ? "selected" : null)">Title</option> *@
-@*         <option value="Id" selected="@(Model.SortBy == "Id" ? "selected" : null)">ID</option> *@
-@*         <option value="Date" selected="@(Model.SortBy == "Date" ? "selected" : null)">Date</option> *@
-@*     </select> *@
-@* *@
-@*     <select name="sortOrder" class="form-select me-2"> *@
-@*         <option value="asc" selected="@(Model.SortOrder == "asc" ? "selected" : null)">Ascending</option> *@
-@*         <option value="desc" selected="@(Model.SortOrder == "desc" ? "selected" : null)">Descending</option> *@
-@*     </select> *@
-@* *@
-@*     <button type="submit" class="btn btn-primary">Sort</button> *@
-@* </form> *@
+    <div class="mb-3 animate__animated animate__bounceInLeft">
+        <label for="sortOption" class="form-label">Sort</label>
+        <select id="sortOption" class="form-select" name="SortOption" onchange="this.form.submit()">
+            <option value="">-- Select sort option --</option>
+            <option value="A-Z" selected="@(Model.SortOption == "A-Z")">A-Z</option>
+            <option value="Z-A" selected="@(Model.SortOption == "Z-A")">Z-A</option>
+            <option value="Oldest" selected="@(Model.SortOption == "Oldest")">Oldest</option>
+            <option value="Newest" selected="@(Model.SortOption == "Newest")">Newest</option>
+        </select>
+    </div>
+</form>
+
+
 
 <!-- Toast Messages -->
 @if (TempData["ToastMessage"] != null)
@@ -47,7 +48,7 @@
 @if (User.IsInRole("Staff"))
 {
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addArticleModal">Add New Article</button>
-    <a asp-page="/Categories/Index" class="btn btn-secondary">Manage Categories</a>
+    <a asp-page="/Category/Index" class="btn btn-secondary">Manage Categories</a>
 }
 
 <!-- Card Layout -->
@@ -55,7 +56,7 @@
 {
     <!-- Giao diện dành cho Staff (dạng bảng) -->
     <div id="tableLayout">
-        <table class="table table-bordered">
+        <table class="table table-bordered animate__animated animate__bounceIn">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -92,6 +93,7 @@
                                     data-content="@article.NewsContent"
                                     data-category="@article?.CategoryId"
                                     data-tags="@(article.TagNames != null && article.TagNames.Any() ? string.Join(";", article.TagNames) : "")"
+                                    data-tagids="@(article.TagIds != null && article.TagIds.Any() ? string.Join(",", article.TagIds) : "")"
                                     data-status="@article.NewsStatus">
                                 Edit
                             </button>
@@ -112,7 +114,7 @@
 else
 {
     <div id="news-list">
-        <div class="row">
+        <div class="row animate__animated animate__bounceIn">
             <div class="col-md-5" id="divContainer">
                 @foreach (var article in Model.Articles)
                 {
@@ -123,12 +125,22 @@ else
                          data-content="@article?.NewsContent"
                          data-tags="@(article.TagNames != null && article.TagNames.Any() ? string.Join(";", article.TagNames) : "")">
                         <div class="card-body">
-                            <h4 class="card-title">@article?.NewsTitle</h4>
-                            <p class="card-text">@article?.Headline</p>
-                            <small class="text-muted">🕒 @article?.CreatedDate</small>
+                            <h4 class="card-title" data-field="title">@article?.NewsTitle</h4>
+                            <p class="card-text" data-field="headline">@article?.Headline</p>
+                            <small class="text-muted" data-field="createdAt">🕒 @article?.CreatedDate</small>
 
-                            <p><strong>Category:</strong> @article?.CategoryName</p>
-                            <p><strong>Status:</strong> @(article?.NewsStatus ?? false ? "🟢 Open" : "🔴 Close")</p>
+                            <p>
+                                <strong>Category:</strong> 
+                                <span data-field="category">
+                                    @article?.CategoryName
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Status:</strong>
+                                <span data-field="status">
+                                    @(article?.NewsStatus ?? false ? "🟢 Open" : "🔴 Close")
+                                </span>
+                            </p>
                         </div>
                     </div>
                 }
@@ -144,6 +156,41 @@ else
         </div>
     </div>
 }
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @if (Model.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-page="/NewArticle/Index"
+                   asp-route-CurrentPage="@(Model.CurrentPage - 1)"
+                   asp-route-SearchTerm="@Model.SearchTerm"
+                   asp-route-PageSize="@Model.PageSize">Previous</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-page="/NewArticle/Index"
+                   asp-route-CurrentPage="@i"
+                   asp-route-SearchTerm="@Model.SearchTerm"
+                   asp-route-PageSize="@Model.PageSize">@i</a>
+            </li>
+        }
+
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-page="/NewArticle/Index"
+                   asp-route-CurrentPage="@(Model.CurrentPage + 1)"
+                   asp-route-SearchTerm="@Model.SearchTerm"
+                   asp-route-PageSize="@Model.PageSize">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+
 
 <div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -246,7 +293,8 @@ else
                             @foreach (var tag in Model.Tags)
                             {
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="editTag_@tag.TagId" name="SelectedTags" value="@tag.TagId" />
+                                    <input class="form-check-input" type="checkbox" id="editTag_@tag.TagId"
+                                           name="SelectedTags" value="@tag.TagId" />
                                     <label class="form-check-label" for="editTag_@tag.TagId">@tag.TagName</label>
                                 </div>
                             }
@@ -300,12 +348,48 @@ else
 
 <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/css/bootstrap-switch-button.min.css"
       rel="stylesheet">
-<script
-    src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap-switch-button@1.1.0/dist/bootstrap-switch-button.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @section Scripts {
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById("divContainer");
+            if (!container) return;
+
+            container.addEventListener('click', function (event) {
+                // Tìm thẻ .article-card gần nhất so với chỗ click
+                const card = event.target.closest('.article-card');
+                if (!card) return; // Click không nằm trên hoặc trong .article-card
+
+                // Lấy data-* attributes
+                const title = card.getAttribute("data-title");
+                const category = card.getAttribute("data-category");
+                const content = card.getAttribute("data-content");
+                const tagsAttr = card.getAttribute("data-tags") || "";
+
+                // Hiển thị tiêu đề, category, content
+                document.getElementById("detailTitle").textContent = title;
+                document.getElementById("detailCategory").textContent = category;
+                document.getElementById("detailContent").textContent = content;
+
+                // Hiển thị tag dạng badge
+                const tagContainer = document.getElementById("detailTags");
+                tagContainer.innerHTML = "";
+                // Tách tags theo dấu ";"
+                const tagsArr = tagsAttr.split(";");
+                tagsArr.forEach(tag => {
+                    const span = document.createElement("span");
+                    span.className = "badge bg-info me-1";
+                    span.textContent = tag.trim();
+                    tagContainer.appendChild(span);
+                });
+                // Hiệu ứng viền
+                document.querySelectorAll('.article-card').forEach(c => c.classList.remove('border-primary'));
+                card.classList.add('border-primary');
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".edit-article-btn").forEach(button => {
                 button.addEventListener("click", function () {
@@ -316,7 +400,7 @@ else
                     let category = this.getAttribute("data-category");
                     let tags = this.getAttribute("data-tags");
                     let status = this.getAttribute("data-status");
-
+                    let tagIds   = this.getAttribute("data-tagids")
                     // Điền dữ liệu vào modal chỉnh sửa
                     document.getElementById("editNewsId").value = id;
                     document.getElementById("editNewsTitle").value = title;
@@ -331,7 +415,7 @@ else
 
                     // Đánh dấu các tag đã chọn
                     if (tags) {
-                        let tagArray = tags.split(",");
+                        let tagArray = tagIds.split(",");
                         tagArray.forEach(tagId => {
                             let tagElement = document.getElementById("editTag_" + tagId.trim());
                             if (tagElement) {
@@ -347,25 +431,23 @@ else
             });
         });
     </script>
-}
+    @* Modal delete *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".delete-article-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    let id = this.getAttribute("data-id");
+                    let title = this.getAttribute("data-title");
 
-@* Modal delete *@
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-article-btn").forEach(button => {
-            button.addEventListener("click", function () {
-                let id = this.getAttribute("data-id");
-                let title = this.getAttribute("data-title");
+                    document.getElementById("deleteNewsId").value = id;
+                    document.getElementById("deleteArticleTitle").textContent = title;
 
-                document.getElementById("deleteNewsId").value = id;
-                document.getElementById("deleteArticleTitle").textContent = title;
-
-                let deleteModal = new bootstrap.Modal(document.getElementById("deleteArticleModal"));
-                deleteModal.show();
+                    let deleteModal = new bootstrap.Modal(document.getElementById("deleteArticleModal"));
+                    deleteModal.show();
+                });
             });
         });
-    });
-</script>
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -393,7 +475,7 @@ else
     </script>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Connect with SignalR
@@ -419,7 +501,7 @@ else
                 }
             });
 
-            // 
+            //
             async function startConnection() {
                 try {
                     await connection.start();
@@ -460,45 +542,40 @@ else
             }
 
             // ✅ 4. Tạo component bài viết
-                       function createArticleElement(article) {
-                    const container = document.getElementById("divContainer");
-            if (!container) return;
+            function createArticleElement(article) {
+                const container = document.getElementById("divContainer");
+                if (!container) return;
 
             // Tạo chuỗi HTML
-            const cardHtml = `
-        <div class="news-item card mb-3 article-card"
-             style="cursor: pointer;"
-             data-id="${article.newsId ?? ""}"
-             data-title="${article.newsTitle ?? ""}"
-             data-category="${article.categoryName ?? ""}"
-             data-content="${article.newsContent ?? ""}"
-             data-tags="${(article.tags ?? []).join(";")}">
+                const cardHtml = `
+                <div class="news-item card mb-3 article-card"
+                    style="cursor: pointer;"
+                    data-id="${article.newsId ?? ""}"
+                    data-title="${article.newsTitle ?? ""}"
+                    data-category="${article.categoryName ?? ""}"
+                    data-content="${article.newsContent ?? ""}"
+                    data-tags="${(article.tags ?? []).join(";")}">
 
-            <div class="card-body">
-                <h4 class="card-title">${article.newsTitle ?? ""}</h4>
-                <p class="card-text">${article.headline ?? ""}</p>
-                <small class="text-muted">🕒 ${article.createdAt ?? ""}</small>
+                    <div class="card-body">
+                        <h4 class="card-title">${article.newsTitle ?? ""}</h4>
+                        <p class="card-text">${article.headline ?? ""}</p>
+                        <small class="text-muted">🕒 ${article.createdAt ?? ""}</small>
 
-                <p class="card-text">
-                    <strong>Category:</strong> ${article.categoryName ?? "N/A"}
-                </p>
-                <p class="card-text">
-                    <small class="text-muted">Article ID: ${article.newsId ?? ""}</small>
-                </p>
-                <p class="card-text" id="statusText">
-                    <strong>Status:</strong>
-                    ${
-                        article.newsStatus
-                            ? '<span class="badge bg-success">Open</span>'
-                            : '<span class="badge bg-danger">Close</span>'
-                    }
-                </p>
-            </div>
-        </div>
-        `;
+                        <p class="card-text">
+                            <strong>Category:</strong> ${article.categoryName ?? "N/A"}
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">Article ID: ${article.newsId ?? ""}</small>
+                        </p>
+                        <p>
+                                <strong>Status:</strong> ${ article.newsStatus ? "🟢 Open" : "🔴 Close" }
+                            </p>
+                        </div>
+                    </div>
+                `;
             container.insertAdjacentHTML("afterbegin", cardHtml);
             console.log("HTML", cardHtml);
-                }
+            }
 
             // ✅ 5. Thêm bài viết mới vào danh sách
             function addArticleToList(article) {
@@ -513,31 +590,59 @@ else
 
             // ✅ 6. Cập nhật bài viết trong danh sách
             function updateArticleInList(article) {
-                console.log("🔄 Updating article:", article);
+            // Tìm card cũ theo data-id
+            const card = document.querySelector(`[data-id="${article.newsId}"]`);
 
-                let card = document.querySelector(`[data-id="${article.newsId}"]`);
-                if (!card) {
-                    console.log("⚠️ Article not found in DOM. Adding new one...");
-                    addArticleToList(article);
-                    return;
+            if (card) {
+                if (article.newsStatus) {
+                    card.setAttribute("data-title", article.newsTitle ?? "");
+                    card.setAttribute("data-content", article.newsContent ?? "");
+                    card.setAttribute("data-category", article.categoryName ?? "");
+                    card.setAttribute("data-tags", (article.tags ?? []).join(";"));
+
+                    const titleEl = card.querySelector(".card-title");
+                    if (titleEl) titleEl.textContent = article.newsTitle ?? "";
+
+                    const headlineEl = card.querySelector("[data-field='headline']");
+                    if (headlineEl) headlineEl.textContent = article.headline ?? "";
+
+                    const contentEl = card.querySelector("[data-field='content']");
+                    if (contentEl) contentEl.textContent = article.newsContent ?? "";
+
+                    const categoryEl = card.querySelector("[data-field='category']");
+                    if (categoryEl) categoryEl.textContent = article.categoryName ?? "N/A";
+
+                    const statusEl = card.querySelector("[data-field='status']");
+                    if (statusEl) {
+                        statusEl.textContent = article.newsStatus ? "🟢 Open" : "🔴 Close";
+                    }
+
+                    // Nếu card này đang được chọn (ví dụ có class "border-primary"), cập nhật phần detail bên phải
+                    if (card.classList.contains("border-primary")) {
+                        document.getElementById("detailTitle").textContent = article.newsTitle ?? "";
+                        document.getElementById("detailCategory").textContent = article.categoryName ?? "";
+                        document.getElementById("detailContent").textContent = article.newsContent ?? "";
+
+                        const detailTagsContainer = document.getElementById("detailTags");
+                        detailTagsContainer.innerHTML = "";
+                        (article.tags ?? []).forEach(tag => {
+                            const span = document.createElement("span");
+                            span.className = "badge bg-info me-1";
+                            span.textContent = tag;
+                            detailTagsContainer.appendChild(span);
+                        });
+                    }
                 }
-
-                // Cập nhật dữ liệu bài viết
-                card.dataset.title = article.newsTitle;
-                card.dataset.category = article.categoryName;
-                card.dataset.content = article.newsContent;
-                card.dataset.tags = (article.tags ?? []).join(";");
-
-                // Cập nhật nội dung hiển thị
-                card.querySelector(".card-title").textContent = article.newsTitle ?? "";
-                card.querySelector(".card-text").textContent = article.headline ?? "";
-                card.querySelector(".text-muted").textContent = `🕒 ${article.createdAt ?? ""}`;
-                card.querySelector("#statusText").innerHTML = `
-        <strong>Status:</strong> 
-        ${article.newsStatus ? '<span class="badge bg-success">Open</span>' : '<span class="badge bg-danger">Close</span>'}
-    `;
+                else {
+                    card.remove();
+                }
             }
-
+            else {
+                if (article.newsStatus) {
+                    createArticleElement(article);
+                }
+            }
+        }
 
             // ✅ 7. Xóa bài viết khỏi danh sách
             function removeArticleFromList(newsId) {
@@ -549,26 +654,4 @@ else
         });
 
     </script>
-
 }
-
-@* function updateArticleInList(article) { *@
-@* if (article.newsStatus) { *@
-@* console.log("Status", article.newsStatus); *@
-@* const articleElement = createArticleElement(article); *@
-@* } else { *@
-@* console.log("Removing card:", card); *@
-@* card.remove(); *@
-@* } *@
-@* const card = document.querySelector(`[data-id="${article.newsId}"]`); *@
-@* if (!card) return; *@
-@* const titleEl = card.querySelector(".card-title"); *@
-@* if (titleEl) titleEl.textContent = article.newsTitle ?? ""; *@
-@* const pText = card.querySelectorAll(".card-text"); *@
-@* const statusEl = document.getElementById("statusText"); *@
-@* const categoryEl = document.getElementById("categoryNew"); *@
-@* categoryEl.innerHTML = `<strong>Category:</strong> ${article.categoryName || "N/A"}`; *@
-@* console.log("Status", article.newsStatus); *@
-@* *@
-@*                      *@
-@* } *@

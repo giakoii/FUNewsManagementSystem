@@ -1,7 +1,6 @@
 using AutoMapper;
 using BusinessObject.Enum;
 using BusinessObject.Service;
-using FUNewsManagementSystem.Models.ViewModel;
 using FUNewsManagementSystem2.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

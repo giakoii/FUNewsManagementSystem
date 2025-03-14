@@ -28,7 +28,12 @@ namespace BusinessObject.Service
 
             return _mapper.Map<List<CategoryDto>>(categories.ToList());
         }
+        public List<CategoryDto> GetByParent()
+        {
+            var categories = GetBy(x => x.IsActive == true && x.ParentCategory.CategoryId == x.ParentCategoryId, false).ToList();
 
+            return _mapper.Map<List<CategoryDto>>(categories.ToList());
+        }
 
         /// <summary>
         /// Add new category
@@ -49,7 +54,7 @@ namespace BusinessObject.Service
             Repository.Update(category);
         }
 
-        
+
         /// <summary>
         /// Delete category
         /// </summary>
@@ -82,7 +87,7 @@ namespace BusinessObject.Service
         /// <returns></returns>
         public bool IsCategoryInUse(short categoryId)
         {
-            return GetBy(x => x.CategoryId == categoryId && x.NewsArticles.Any(), 
+            return GetBy(x => x.CategoryId == categoryId && x.NewsArticles.Any(),
                 false).Any();
         }
 

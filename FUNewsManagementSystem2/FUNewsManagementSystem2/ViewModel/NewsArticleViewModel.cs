@@ -1,6 +1,3 @@
-using DataAccessObject.Models;
-using FUNewsManagementSystem.Models.ViewModel;
-
 namespace FUNewsManagementSystem2.ViewModel;
 
 public class NewsArticleViewModel
@@ -14,12 +11,12 @@ public class NewsArticleViewModel
 
     public short? CategoryId { get; set; }
     public string CategoryName { get; set; }
-    public List<CategoryViewModel> Categories { get; set; } = new(); 
+    public List<CategoryViewModel> Categories { get; set; } = new();
 
     // Tags
     public List<int> SelectedTags { get; set; } = new();
-    public List<string> TagNames { get; set; } = new(); 
-
+    public List<string> TagNames { get; set; } = new();
+    public List<int> TagIds { get; set; }
     public bool? NewsStatus { get; set; }
 
     public short? CreatedById { get; set; }

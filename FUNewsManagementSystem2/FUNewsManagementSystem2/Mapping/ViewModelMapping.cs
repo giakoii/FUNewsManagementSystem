@@ -29,7 +29,9 @@ public class ViewModelMapping : Profile
             .ForMember(dest => dest.CategoryName,
                 opt => opt.MapFrom(src => src.Category.CategoryName))
             .ForMember(dest => dest.TagNames,
-                opt => opt.MapFrom(src => src.Tags.Select(t => t.TagName)));
+                opt => opt.MapFrom(src => src.Tags.Select(t => t.TagName)))
+            .ForMember(dest => dest.TagIds,
+                opt => opt.MapFrom(src => src.Tags.Select(t => t.TagId)));
 
 
         CreateMap<NewsArticleViewModel, NewsArticle>();
