@@ -1,13 +1,13 @@
 using AutoMapper;
 using BusinessLogic.Service;
 using BusinessObject.Service;
-using DataAccessObject.Models;
 using FUNewsManagementSystem.Hubs;
 using FUNewsManagementSystem2.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
+using BusinessLogic.DTOs;
 
 namespace FUNewsManagementSystem2.Pages.NewArticle
 {
@@ -47,40 +47,43 @@ namespace FUNewsManagementSystem2.Pages.NewArticle
 
         public void LoadData()
         {
-            IEnumerable<NewsArticle> articlesQuery = Enumerable.Empty<NewsArticle>();
+            IEnumerable<NewsArticleViewModel> articleViewModel = null;
 
             if (!User.Identity.IsAuthenticated || User.IsInRole("Lecturer"))
             {
                 // Chỉ lấy bài viết NewsStatus == true
-                articlesQuery = _articleService.GetBy(
+                var newsArticles = _articleService.GetBy(
                     x => (x.NewsStatus == true),
                     true,
                     a => a.Category,
                     t => t.Tags
                 );
+                articleViewModel = _mapper.Map<IEnumerable<NewsArticleViewModel> >(newsArticles);
             }
             else if (User.IsInRole("Staff"))
             {
-                articlesQuery = _articleService.GetBy(
+                var articlesQuery = _articleService.GetBy(
                     null,
                     true,
                     a => a.Category,
                     t => t.Tags
                 );
+                articleViewModel = _mapper.Map<IEnumerable<NewsArticleViewModel> >(articlesQuery);
+
             }
 
-            articlesQuery = SearchAndSort(articlesQuery);
+            articleViewModel = SearchAndSort(articleViewModel);
 
-            int totalCount = articlesQuery.Count();
+            int totalCount = articleViewModel.Count();
             TotalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
 
-            var pagedArticles = articlesQuery
+            var pagedArticles = articleViewModel
                 .Skip((CurrentPage - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
 
 
-            var articlesList = articlesQuery.ToList();
+            var articlesList = articleViewModel.ToList();
             Articles = _mapper.Map<List<NewsArticleViewModel>>(pagedArticles);
 
             var tags = _tagService.GetBy(); // trả về IEnumerable<Tag>
@@ -90,13 +93,12 @@ namespace FUNewsManagementSystem2.Pages.NewArticle
             Categories = _mapper.Map<List<CategoryViewModel>>(categories) ?? new List<CategoryViewModel>();
         }
 
-        private IEnumerable<NewsArticle> SearchAndSort(IEnumerable<NewsArticle> articlesQuery)
+        private IEnumerable<NewsArticleViewModel> SearchAndSort(IEnumerable<NewsArticleViewModel> articlesQuery)
         {
             if (!string.IsNullOrEmpty(SearchTerm))
             {
                 articlesQuery = articlesQuery.Where(a => a.NewsTitle.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
             }
-
             switch (SortOption)
             {
                 case "A-Z":
@@ -134,7 +136,7 @@ namespace FUNewsManagementSystem2.Pages.NewArticle
                 return Page();
             }
 
-            var newArticle = _mapper.Map<NewsArticle>(NewArticle);
+            var newArticle = _mapper.Map<NewsArticleDto>(NewArticle);
 
             newArticle.NewsArticleId = GetNextNewsArticleId();
             newArticle.CreatedDate = DateTime.UtcNow;
@@ -163,7 +165,7 @@ namespace FUNewsManagementSystem2.Pages.NewArticle
                 newsContent = newArticle.NewsContent,
                 newsSource = newArticle.NewsSource,
                 categoryId = newArticle.CategoryId,
-                newsStatus = newArticle.NewsStatus,
+                newsStatus = true,
                 createdById = newArticle.CreatedById,
                 tags = newArticle.Tags?.Select(t => t.TagName).ToList(),
                 categoryName = catName,

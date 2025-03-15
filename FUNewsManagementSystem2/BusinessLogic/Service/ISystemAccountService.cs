@@ -25,5 +25,6 @@ namespace BusinessLogic.Service
         SystemAccountDto GetAccountByEmail(string email);
 
         List<VwUserNewsHistoryDto> GetNewsHistoryByAccountId(short id);
+        bool AddSystemAccount(SystemAccountDto account);
     }
 }

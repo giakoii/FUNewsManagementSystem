@@ -1,3 +1,5 @@
+using DataAccessObject.Models;
+
 namespace BusinessLogic.DTOs;
 
 public class NewsArticleDto
@@ -11,7 +13,8 @@ public class NewsArticleDto
     
     public short? CategoryId { get; set; }
     public string CategoryName { get; set; }
-
+    
+    public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
     public List<int> TagIds { get; set; } = new();
     public List<string> TagNames { get; set; } = new();
 

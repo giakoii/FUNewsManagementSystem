@@ -22,7 +22,8 @@ namespace BusinessObject.Service
         /// <param name="tagService"></param>
         /// <param name="newArticelRepository"></param>
         /// <param name="mapper"></param>
-        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService, INewArticelRepository newArticelRepository, IMapper mapper) : base(repository)
+        public NewArticleService(BaseRepository<NewsArticle, string> repository, ITagService tagService,
+            INewArticelRepository newArticelRepository, IMapper mapper) : base(repository)
         {
             _tagService = tagService;
             _newsArticleRepository = newArticelRepository;
@@ -34,17 +35,19 @@ namespace BusinessObject.Service
         /// </summary>
         /// <param name="newsArticle"></param>
         /// <returns></returns>
-        public bool AddNewsArticle(NewsArticle newsArticle)
+        public bool AddNewsArticle(NewsArticle newsArticle, short id)
         {
-            newsArticle.CreatedDate = DateTime.Now;
-            newsArticle.NewsStatus = true;
-            Repository.Add(newsArticle);
+            // newsArticle.NewsArticleId = GetNextNewsArticleId();
+            // newsArticle.CreatedById = GetCurrentUserId();
+            // newsArticle.CreatedDate = DateTime.Now;
+            // newsArticle.NewsStatus = true;
+            // Repository.Add(newsArticle);
             return true;
         }
 
         public List<NewsArticleDto> GetNewsArticles()
         {
-            var articles = Repository.GetBy(x => x.NewsStatus == true, 
+            var articles = Repository.GetBy(x => x.NewsStatus == true,
                 false, a => a.Tags
             ).ToList();
             foreach (var newsArticle in articles)
@@ -54,8 +57,10 @@ namespace BusinessObject.Service
                 {
                     Console.WriteLine(articleTag.TagName);
                 }
+
                 Console.WriteLine("---------");
             }
+
             return _mapper.Map<List<NewsArticleDto>>(articles);
         }
 
@@ -76,6 +81,7 @@ namespace BusinessObject.Service
             {
                 return false;
             }
+
             article.Tags.Clear();
             Repository.Delete(article);
             return true;
@@ -106,14 +112,36 @@ namespace BusinessObject.Service
                 {
                     existingArticle.Tags.Add(tag);
                 }
+
                 Repository.Update(existingArticle);
             }
         }
 
         public List<NewsArticleDto> GetNewsReportByDateRange(DateTime startDate, DateTime endDate)
         {
-            var articles = Repository.GetBy(x => x.CreatedDate >= startDate && x.CreatedDate <= endDate, true, a => a.Tags).ToList();
+            var articles = Repository
+                .GetBy(x => x.CreatedDate >= startDate && x.CreatedDate <= endDate, true, a => a.Tags).ToList();
             return _mapper.Map<List<NewsArticleDto>>(articles);
+        }
+
+        public void AddNewsArticle(NewsArticleDto newArticle)
+        {
+            NewsArticle newsArticle = _mapper.Map<NewsArticle>(newArticle);
+            newsArticle.NewsTitle = newArticle.NewsTitle;
+            newsArticle.CreatedDate = DateTime.Now;
+            newsArticle.NewsStatus = true;
+            Repository.Add(newsArticle);
+        }
+
+        private string GetNextNewsArticleId()
+        {
+            var articles = GetBy();
+
+            int maxId = articles
+                .ToList()
+                .Max(a => int.Parse(a.NewsArticleId));
+
+            return (maxId + 1).ToString();
         }
     }
 }

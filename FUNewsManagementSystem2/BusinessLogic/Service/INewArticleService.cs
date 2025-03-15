@@ -5,7 +5,7 @@ namespace BusinessObject.Service
 {
     public interface INewArticleService : IBaseService<NewsArticle, string>
     {
-        bool AddNewsArticle(NewsArticle newsArticle);
+        bool AddNewsArticle(NewsArticle newsArticle, short userId);
         
         List<NewsArticleDto> GetNewsArticles();
         
@@ -13,5 +13,7 @@ namespace BusinessObject.Service
 
         void UpdateNewsArticle(NewsArticle newsArticle);
         List<NewsArticleDto> GetNewsReportByDateRange(DateTime startDate, DateTime endDate);
+        
+        void AddNewsArticle(NewsArticleDto newArticle);
     }
 }

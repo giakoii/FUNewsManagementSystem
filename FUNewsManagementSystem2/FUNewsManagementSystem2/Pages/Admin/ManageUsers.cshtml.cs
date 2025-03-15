@@ -2,7 +2,6 @@ using AutoMapper;
 using BusinessLogic.DTOs;
 using BusinessLogic.Service;
 using BusinessObject.Enum;
-using BusinessObject.Service;
 using DataAccessObject.Models;
 using FUNewsManagementSystem2.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -59,15 +58,9 @@ public class ManageUsers : PageModel
         }
 
         // Convert to SystemAccount
-        var account = new SystemAccount
-        {
-            AccountEmail = UserView.AccountEmail,
-            AccountName = UserView.AccountName,
-            AccountRole = UserView.AccountRole,
-        };
-
-        var result = await _systemAccountService.CreateSystemAccountAsync(account);
-
+        var account = _mapper.Map<SystemAccountDto>(UserView);
+        var result = _systemAccountService.AddSystemAccount(account);
+        
         if (!result)
         {
             ModelState.AddModelError(string.Empty, "Failed to create user.");

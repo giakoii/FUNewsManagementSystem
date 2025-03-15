@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using BusinessLogic.Service;
 using BusinessObject.Enum;
-using BusinessObject.Service;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity.Data;

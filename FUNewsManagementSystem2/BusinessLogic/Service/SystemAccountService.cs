@@ -190,4 +190,17 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
         
         return _mapper.Map<List<VwUserNewsHistoryDto>>(newsHistory);
     }
+
+    public bool AddSystemAccount(SystemAccountDto account)
+    {
+        var newAccount = _mapper.Map<SystemAccount>(account);
+        var accCount = Repository.GetBy().ToList().Max(a => a.AccountId);
+        short accountId = (short) (accCount + 1);
+        newAccount.AccountId = accountId;
+        newAccount.AccountEmail = account.AccountEmail;
+        newAccount.AccountName = account.AccountName;
+        newAccount.AccountRole = account.AccountRole;
+        Repository.Add(newAccount);
+        return true;
+    }
 }

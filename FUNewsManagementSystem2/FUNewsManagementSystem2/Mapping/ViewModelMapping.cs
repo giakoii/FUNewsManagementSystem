@@ -52,6 +52,8 @@ public class ViewModelMapping : Profile
 
         CreateMap<ViewUserNewsHistory, VwUserNewsHistoryDto>();
         CreateMap<VwUserNewsHistoryDto, ViewUserNewsHistory>();
+        
+        CreateMap<SystemAccountDto, SystemAccount>();
 
     }
 }
