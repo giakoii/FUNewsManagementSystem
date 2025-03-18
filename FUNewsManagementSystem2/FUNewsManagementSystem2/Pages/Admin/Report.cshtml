@@ -1,7 +1,7 @@
-@page
+﻿@page
 @model FUNewsManagementSystem2.Pages.Admin.Report
 @{
-    ViewData["Title"] = "News Report by Date Range";
+    ViewData["Title"] = "News Report Dashboard";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -18,74 +18,140 @@
     <button type="submit" class="btn btn-primary mt-3">Get Report</button>
 </form>
 
+<div class="row mt-4">
+    <!-- Pie Chart for Categories -->
+    <div class="col-md-4">
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+    <!-- User Count -->
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <h3>@Model.TotalUsers</h3>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-4">
+        <canvas id="newsChart"></canvas>
+    </div>
+</div>
+
+
 @if (Model.NewsArticles.Any())
 {
-    <canvas id="newsChart" width="400" height="200"></canvas>
-
     <table class="table table-striped mt-4">
         <thead>
-        <tr>
-            <th>Title</th>
-            <th>Created Date</th>
-            <th>Content</th>
-        </tr>
+            <tr>
+                <th>Title</th>
+                <th>Created Date</th>
+                <th>Content</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var article in Model.NewsArticles)
-        {
-            <tr>
-                <td>@article.NewsTitle</td>
-                <td>@article.CreatedDate?.ToString("yyyy-MM-dd")</td>
-                <td>@article.NewsContent</td>
-            </tr>
-        }
+            @foreach (var article in Model.NewsArticles)
+            {
+                <tr>
+                    <td>@article.NewsTitle</td>
+                    <td>@article.CreatedDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@article.NewsContent</td>
+                </tr>
+            }
         </tbody>
     </table>
+}
+else
+{
+    <p class="mt-4">No news articles found for the specified date range.</p>
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var articles = @Html.Raw(Json.Serialize(Model.NewsArticles));
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      
+        var articles = @Html.Raw(Json.Serialize(Model.NewsArticles));
+        var monthlyLabels = [];
+        var monthlyDataCounts = {};
 
-            var labels = [];
-            var dataCounts = {};
+        console.log("Articles data:", articles); 
 
-            articles.forEach(article => {
-                let date = new Date(article.createdDate).toISOString().split('T')[0];
-                dataCounts[date] = (dataCounts[date] || 0) + 1;
-            });
+        articles.forEach(article => {
+            if (article.createdDate) { 
+                let date = new Date(article.createdDate);
+                if (!isNaN(date.getTime())) { // Đảm bảo date hợp lệ
+                    let monthYear = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0');
+                    monthlyDataCounts[monthYear] = (monthlyDataCounts[monthYear] || 0) + 1;
+                } else {
+                    console.log("Invalid date found:", article.createdDate);
+                }
+            }
+        });
 
-            labels = Object.keys(dataCounts).sort();
-            var dataValues = labels.map(date => dataCounts[date]);
+        monthlyLabels = Object.keys(monthlyDataCounts).sort();
+        var monthlyDataValues = monthlyLabels.map(date => monthlyDataCounts[date]);
 
-            var ctx = document.getElementById('newsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
+
+
+        var monthlyCtx = document.getElementById('newsChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Articles per Month',
+                    data: monthlyDataValues,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Number of Articles' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Month' }
+                    }
+                }
+            }
+        });
+
+       
+        var categoryData = @Html.Raw(Json.Serialize(Model.CategoryStats));
+        if (categoryData && categoryData.length > 0) {
+            var categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'pie',
                 data: {
-                    labels: labels,
+                    labels: categoryData.map(item => item.categoryName),
                     datasets: [{
-                        label: 'Number of News Articles',
-                        data: dataValues,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
+                        data: categoryData.map(item => item.articleCount),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ]
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: true, text: 'Articles by Category' }
                     }
                 }
             });
-        });
-    </script>
-}
-else if (Model.StartDate != null && Model.EndDate != null)
-{
-    <p>No news articles found for the specified date range.</p>
-}
-else
-{
-    <p>Please select a date range and click "Get Report".</p>
-}
+        } else {
+            console.log("No category data available");
+        }
+    });
+</script>

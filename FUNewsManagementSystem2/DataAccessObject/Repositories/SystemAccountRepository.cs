@@ -63,4 +63,5 @@ public class SystemAccountRepository : BaseRepository<SystemAccount, short>, ISy
     {
         return _context.SystemAccounts.FirstOrDefault(x => x.AccountEmail == email);
     }
+    
 }

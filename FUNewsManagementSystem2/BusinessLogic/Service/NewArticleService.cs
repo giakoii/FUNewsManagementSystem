@@ -120,10 +120,10 @@ namespace BusinessObject.Service
         public List<NewsArticleDto> GetNewsReportByDateRange(DateTime startDate, DateTime endDate)
         {
             var articles = Repository
-                .GetBy(x => x.CreatedDate >= startDate && x.CreatedDate <= endDate, true, a => a.Tags).ToList();
+                .GetBy(x => x.CreatedDate >= startDate && x.CreatedDate <= endDate, true, a => a.Tags)
+                .ToList();
             return _mapper.Map<List<NewsArticleDto>>(articles);
         }
-
         public void AddNewsArticle(NewsArticleDto newArticle)
         {
             NewsArticle newsArticle = _mapper.Map<NewsArticle>(newArticle);

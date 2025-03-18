@@ -203,4 +203,8 @@ public class SystemAccountService : BaseService<SystemAccount, short>, ISystemAc
         Repository.Add(newAccount);
         return true;
     }
+    public List<SystemAccount> GetAllUsers()
+    {
+        return Repository.GetBy(x => true, false).ToList();
+    }
 }
